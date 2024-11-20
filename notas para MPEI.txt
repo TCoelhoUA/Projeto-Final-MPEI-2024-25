@@ -1,0 +1,20 @@
+Malware Detection in Software Binaries
+
+    Use case: Identify malware embedded in software binaries.
+    Approach:
+        Naive Bayes: Classify binaries as malicious or benign based on features like API calls or file signatures.
+        Bloom Filters: Store known malware hashes for rapid detection.
+        MinHash Similarity: Compare new binaries with known malware to find partial matches.
+
+Smart Shopping List
+
+    Use case: Simplify and optimize shopping.
+    Approach:
+        Naive Bayes: Predict items to add to a shopping list based on past purchases or preferences.
+        Bloom Filters: Track items already bought to avoid duplicates.
+        MinHash Similarity: Suggest similar items or replacements if an item is unavailable.
+
+carrinho: https://www.kaggle.com/datasets/irfanasrullah/groceries
+
+datas:
+https://www.kaggle.com/datasets/rashikrahmanpritom/groceries-dataset-for-market-basket-analysismba
