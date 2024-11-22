@@ -1,21 +1,27 @@
 %% Leitura dos data-sets
-produtos = readcell("produtos.csv");
-carrinhos = readcell("carrinhos.csv");
+dados_produtos = readcell("produtos_simplified.csv");
+carrinhos = readcell("carrinhos_simplified.csv");
 
 %% Parse dos dados
-caracteristicas = produtos(2:end, 3);               % Vetor com os vários produtos comprados (separadamente)
-caracteristicas = unique(caracteristicas);          % Vetor com os tipos distintos de produtos
+produtos = dados_produtos(2:end, 3);               % Vetor com os vários produtos comprados (separadamente)
+caracteristicas = unique(produtos);                % Vetor com os tipos distintos de produtos
 
-classes_numericas = cell2mat(produtos(2:end,7));    % Vetor com as classes associadas a cada compra de produto individual
+classes_numericas = cell2mat(dados_produtos(2:end,7));    % Vetor com as classes associadas a cada compra de produto individual
 
 % Atribuição das classes 'SEMANA' e 'FIM DE SEMANA'
 % Semana - Segunda a Sexta (0:4)
 % Fim de semana - Sábado e Domingo (5:6)
 
-classes = cell(size(classes_numericas)); % Cria uma célula do mesmo tamanho de 'classes_nuumericas'
+classes = cell(size(classes_numericas)); % Cria uma célula do mesmo tamanho de 'classes_numericas'
 classes(classes_numericas >= 0 & classes_numericas <= 4) = {'SEMANA'};
 classes(classes_numericas >= 5 & classes_numericas <= 6) = {'FIM DE SEMANA'};
 classes = categorical(classes);
+
+%associa cada produto a uma classe
+classes_produto = calcProbCaract(produtos, classes, caracteristicas);
+
+%Cria uma matriz com o produto e a sua classe
+prod_class_matrix = [caracteristicas(:) classes_produto(:)];
 
 % Criação da matriz Treino
 Treino = treino(carrinhos, caracteristicas);
@@ -26,7 +32,7 @@ prob_fimsem = sum(classes == 'FIM DE SEMANA')/length(classes);     % P('FIM DE S
 fprintf("\nProbabilidades de cada classe:\nP('SEMANA') = %.4f\nP('FIM SEMANA') = %.4f\n", prob_sem, prob_fimsem);
 
 %% TESTE 1 - Dá print dos produtos e quando se vendem mais (semana ou fim de semana, proporcional ao dias: 5 e 2)
-%produtos = categorical(produtos(2:end, 3));
+%produtos = categorical(dados_produtos(2:end, 3));
 for i=1:length(caracteristicas)
     sem = 0;
     fds = 0;
@@ -62,7 +68,7 @@ end
 %% Probabilidade de cada característica sabendo a classe
 % Classe = 'SEMANA'
 linhas_sem = classes == 'SEMANA';
-treino_sem = treino(linhas_sem; :);
+treino_sem = treino(linhas_sem, :);
 contagem = sum(treino_sem);
 total = size(treino_sem, 1);
 prob_caracteristica_dado_sem = contagem/total;

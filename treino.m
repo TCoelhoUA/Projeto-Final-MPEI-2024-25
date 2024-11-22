@@ -22,15 +22,15 @@ function Treino = treino(carrinhos, caracteristicas)
 
     Treino = zeros(size(carrinhos, 1)-1,size(caracteristicas, 1), 'uint8');
 
-    for car = 1:length(caracteristicas)
-        for line = 2:size(Treino, 1)
-            for col = 1:size(carrinhos, 2)
-                if ~ismissing(carrinhos{line, col}) % Se não estiver <missing>
-                    if ismember(carrinhos{line, col}, caracteristicas(car))
-                        Treino(line-1, car) = 1;
-                    else                            % Caso contrário saltamos de carrinho (o atual já terminou)
-                        break
+    for produto = 1:length(caracteristicas)
+        for carro = 2:size(Treino, 1)
+            for item_number = 1:size(carrinhos, 2)
+                if ~ismissing(carrinhos{carro, item_number}) % Se não estiver <missing>
+                    if ismember(carrinhos{carro, item_number}, caracteristicas(produto))
+                        Treino(carro-1, produto) = 1;
                     end
+                else                            % Caso contrário saltamos de carrinho (o atual já terminou)
+                    break
                 end
             end
         end
