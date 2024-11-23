@@ -25,7 +25,7 @@ prod_class_matrix = [caracteristicas(:) classes_produto(:)];
 
 % Criação da matriz Treino
 Treino = treino(carrinhos, caracteristicas);
-Classes = classificar(carrinhos, caracteristicas);
+[Classes, probsSEM, probsFIMSEM] = classificar(carrinhos, produtos, classes, caracteristicas);
 %% Probabilidades das classes: "SEMANA" e "FIM DE SEMANA"
 prob_sem = sum(classes == 'SEMANA')/length(classes);     % P('SEMANA')
 prob_fimsem = sum(classes == 'FIM DE SEMANA')/length(classes);     % P('FIM DE SEMANA')

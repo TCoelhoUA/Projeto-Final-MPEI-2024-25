@@ -6,6 +6,8 @@ function [classes_carrinhos, probsSEM, probsFIMSEM] = classificar(carrinhos, pro
     probsFIMSEM = zeros(1, length(caracteristicas));
 
     for car=1:length(caracteristicas)
+        s = 0;
+        fs = 0;
         freq = 0; % frequencia do produto
 
         for produto=1:length(produtos)
@@ -15,11 +17,12 @@ function [classes_carrinhos, probsSEM, probsFIMSEM] = classificar(carrinhos, pro
                     probsSEM(car) = probsSEM(car) +1;
                 else
                     probsFIMSEM(car) = probsFIMSEM(car) +1;
+                    fs = fs;
                 end
             end
         end
-        probsSEM(car) = probsSEM(car)/freq;
-        probsFIMSEM(car) = probsFIMSEM(car)/freq;
+        probsSEM = probsSEM/freq;
+        probsFIMSEM = probsFIMSEM/freq;
     end
 
     classes_carrinhos = categorical();
