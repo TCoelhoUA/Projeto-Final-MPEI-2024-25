@@ -17,38 +17,74 @@ classes(classes_numericas >= 0 & classes_numericas <= 4) = {'SEMANA'};
 classes(classes_numericas >= 5 & classes_numericas <= 6) = {'FIM DE SEMANA'};
 classes = categorical(classes);
 
-%associa cada produto a uma classe
+% Associa cada produto a uma classe
 classes_produto = calcProbCaract(produtos, classes, caracteristicas);
 
-%Cria uma matriz com o produto e a sua classe
+% Cria uma matriz com o produto e a sua classe
 prod_class_matrix = [caracteristicas(:) classes_produto(:)];
 
-% Criação da matriz Treino
+% Criação da matriz Treino (talvez não seja preciso, pois as nossas
+% P(car_i|classe) já é retirada automaticamente pelas caracteristicas
 Treino = treino(carrinhos, caracteristicas);
 [Classes, probsSEM, probsFIMSEM] = classificar(carrinhos, produtos, classes, caracteristicas);
+
 %% Probabilidades das classes: "SEMANA" e "FIM DE SEMANA"
 prob_sem = sum(classes == 'SEMANA')/length(classes);     % P('SEMANA')
 prob_fimsem = sum(classes == 'FIM DE SEMANA')/length(classes);     % P('FIM DE SEMANA')
 fprintf("\nProbabilidades de cada classe:\nP('SEMANA') = %.4f\nP('FIM SEMANA') = %.4f\n", prob_sem, prob_fimsem);
 
+%% Inicializar Bloom Filter
+BF = inicializarBF(5000);   % 5000 é só um valor atoa (possivelmente a alterar depois)
+
+%% Pedir input ao utilizador
+itensCarrinho = 0;
+carrinho = cell();
+recomendacoes = cell();
+
+while itensCarrinho ~= 50
+    fprintf("Itens: %d/50\n\n1 - Adicionar Item\n2 - Sair\n\n", itensCarrinho);
+    opt = input("Opção -> ");
+    switch opt
+        case 1  % Processo de adicionar item ao carrinho (e atualização das recomendações)
+            fprintf("Recomendações:\n");
+            mostrar_recomendacoes();
+            produto = input("Produto -> ", "s");
+            if ~ismember(caracteristicas, produto)
+                fprintf("Produto não encontrado!\n");
+            elseif verificarBF(elemento, BF, k)
+                fprintf("Produto já adicionado!");
+            else
+                itensCarrinho = itensCarrinho+1;
+                recomendacoes = atualizar_recomendacoes(carrinho);
+            end
+            
+        case 2  % Termina a execução do programa
+            disp("<strong>Exiting...</strong>");
+            return
+
+        otherwise
+            fprintf("<strong>Opção inválida!</strong>\n");
+    end
+end
+
 %% TESTE 1 - Dá print dos produtos e quando se vendem mais (semana ou fim de semana, proporcional ao dias: 5 e 2)
 %produtos = categorical(dados_produtos(2:end, 3));
 for i=1:length(caracteristicas)
     sem = 0;
-    fds = 0;
+    fimsem = 0;
     for n=1:length(produtos)
         if ismember(produtos{n, 1}, caracteristicas(i, 1))
             if classes(n, 1) == 'SEMANA'
                 sem = sem+1/5;
             else
-                fds = fds+1/2;
+                fimsem = fimsem+1/2;
             end
         end
     end
-    if sem > fds
+    if sem > fimsem
         fprintf("%s é mais SEMANA (%d | %d)\n", caracteristicas{i, 1});
     else
-        fprintf("%s é mais FODASSE (%d | %d)\n", caracteristicas{i, 1});
+        fprintf("%s é mais FIM DE SEMANA (%d | %d)\n", caracteristicas{i, 1});
     end
 end
 
@@ -56,7 +92,7 @@ end
 fprintf("%d - %d", probsSEM(2), probsFIMSEM(2));
 c=0;
 for i=1:length(probsSEM)
-    if ((probsSEM(i) == 0 & probsFIMSEM(i) ~= 0) || (probsSEM(i) ~= 0 & probsFIMSEM(i) == 0))
+    if ((probsSEM(i) == 0 && probsFIMSEM(i) ~= 0) || (probsSEM(i) ~= 0 && probsFIMSEM(i) == 0))
         fprintf("%d\n", i);
         c=c+1;
     end
@@ -64,20 +100,4 @@ end
 
 %% Teste 3
 
-
-%% Probabilidade de cada característica sabendo a classe
-% Classe = 'SEMANA'
-linhas_sem = classes == 'SEMANA';
-treino_sem = treino(linhas_sem, :);
-contagem = sum(treino_sem);
-total = size(treino_sem, 1);
-prob_caracteristica_dado_sem = contagem/total;
-%linhas_C1 = classes_treino == C1;
-%TREINO_C1 = TREINO(linhas_C1, :);
-
-%contagem = sum(TREINO_C1); % somas as colunas e deixa o número de ocorrência de cada característica
-%total = size(TREINO_C1, 1);
-
-%prob_caracteristica_dado_C1 = contagem/total;
-% Classe = 'FIM DE SEMANA'
 
