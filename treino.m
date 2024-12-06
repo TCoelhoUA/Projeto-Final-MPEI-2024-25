@@ -1,4 +1,4 @@
-function Treino = treino(carrinhos, caracteristicas)
+function Treino = treino(carrinhos, caracteristicas, h)
     % A função 'cellTreino' cria uma matriz binária do tipo tabela onde marca
     % com 1 sempre que uma caracteristica se verificar.
     %
@@ -34,6 +34,7 @@ function Treino = treino(carrinhos, caracteristicas)
                 end
             end
         end
+        waitbar(3/6+1/6*((produto-1)/length(caracteristicas)), h, 'A criar uma matriz de treino...');
     end
 end
 

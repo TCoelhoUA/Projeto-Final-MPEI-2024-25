@@ -1,7 +1,10 @@
+h = waitbar(0, 'A ler os produtos...', 'Name', 'A processar dados (Por favor espere)');
+
 %% Leitura dos data-sets
 dados_produtos = readcell("produtos_simplified.csv");
+waitbar(1/6, h, 'A ler os carrinhos...');
 carrinhos = readcell("carrinhos_simplified.csv");
-
+waitbar(2/6, h, 'A atribuir classes aos produtos...');
 %% Parse dos dados
 produtos = dados_produtos(2:end, 3);               % Vetor com os vários produtos comprados (separadamente)
 caracteristicas = unique(produtos);                % Vetor com os tipos distintos de produtos
@@ -18,15 +21,17 @@ classes(classes_numericas >= 5 & classes_numericas <= 6) = {'FIM DE SEMANA'};
 classes = categorical(classes);
 
 % Associa cada produto a uma classe
-classes_produto = calcProbCaract(produtos, classes, caracteristicas);
+[classes_produto, probsSEM, probsFIMSEM] = calcProbCaract(produtos, classes, caracteristicas,h);
 
-% Cria uma matriz com o produto e a sua classe
-prod_class_matrix = [caracteristicas(:) classes_produto(:)];
+% Cria uma matriz com o produto e a sua classe respetiva
+prod_class_matrix = [caracteristicas classes_produto];
+product_prob = [probsSEM probsFIMSEM];
 
 % Criação da matriz Treino (talvez não seja preciso, pois as nossas
 % P(car_i|classe) já é retirada automaticamente pelas caracteristicas
-Treino = treino(carrinhos, caracteristicas);
-[Classes, probsSEM, probsFIMSEM] = classificar(carrinhos, produtos, classes, caracteristicas);
+Treino = treino(carrinhos, caracteristicas,h);
+Classes_carrinho = classificar(carrinhos, caracteristicas, product_prob2, h);
+delete(h)
 
 %% Probabilidades das classes: "SEMANA" e "FIM DE SEMANA"
 prob_sem = sum(classes == 'SEMANA')/length(classes);     % P('SEMANA')

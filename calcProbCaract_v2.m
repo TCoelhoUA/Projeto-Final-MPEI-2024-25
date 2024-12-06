@@ -25,11 +25,12 @@ function [classes_produtos, probsSEM, probsFIMSEM] = calcProbCaract(produtos, cl
 
         for produto=1:length(produtos)
             if strcmp(produtos{produto}, caracteristicas{car})
-                freq = freq + 1;
                 if classes(produto) == "SEMANA"
-                    probsSEM(car) = probsSEM(car) +1;
+                    probsSEM(car) = probsSEM(car) +1/5;
+                    freq = freq + 1/5;
                 else
-                    probsFIMSEM(car) = probsFIMSEM(car) +1;
+                    probsFIMSEM(car) = probsFIMSEM(car) +1/2;
+                    freq = freq + 1/2;
                 end
             end
         end
