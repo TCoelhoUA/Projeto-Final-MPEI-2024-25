@@ -1,13 +1,10 @@
-Lista de Compras Inteligente
+Lista de compras inteligente
 
-    Objetivo: Simplificar e otimizar as compras.
-    Metodos:
-        Naive Bayes: Prever itens para adicionar à lista baseado nas ultimas compras ou perferencias.
-        Bloom Filters: Rastrear itens já comprados para evitar duplicados.
-        MinHash Similarity: Sugerir itens parecidos ou substituições se um item não estiver disponivel.
+Naïve Bayes= Prever itens a adicionar a um carrinho com bas em compras passadas
+Bloom Filter: Verificar a existência de um produto no carrinho
+MinHash: Sugerir itens de carrinho similares passados
 
-carrinho:
-https://www.kaggle.com/datasets/irfanasrullah/groceries
+carrinho: https://www.kaggle.com/datasets/irfanasrullah/groceries
 
 datas:
 https://www.kaggle.com/datasets/rashikrahmanpritom/groceries-dataset-for-market-basket-analysismba

@@ -1,4 +1,4 @@
-function [classes_produtos, probsSEM, probsFIMSEM] = calcProbCaract(produtos, classes, caracteristicas,h)
+function [classes_produtos, product_prob, FREQ] = calcProbCaract(produtos, classes, caracteristicas,h)
     % Associa uma classe a cada produto com base em compras individuais de
     % cada produto no passado
     %
@@ -19,6 +19,7 @@ function [classes_produtos, probsSEM, probsFIMSEM] = calcProbCaract(produtos, cl
     classes_produtos = categorical(zeros(size(caracteristicas, 1),1));
     probsSEM = zeros(length(caracteristicas), 1);
     probsFIMSEM = zeros(length(caracteristicas), 1);
+    FREQ = zeros(length(caracteristicas), 1);
 
     for car=1:length(caracteristicas)
         freq = 0; % frequencia do produto
@@ -33,6 +34,7 @@ function [classes_produtos, probsSEM, probsFIMSEM] = calcProbCaract(produtos, cl
                 end
             end
         end
+        FREQ(car) = freq;
         if (freq == 0)
             classes_produtos(car) = 'N/A';
             break;
@@ -46,4 +48,6 @@ function [classes_produtos, probsSEM, probsFIMSEM] = calcProbCaract(produtos, cl
         end
         waitbar(2/6+1/6*car/length(caracteristicas), h, 'A atribuir classes aos produtos...');
     end
+    product_prob(:, 1) = probsSEM;
+    product_prob(:, 2) = probsFIMSEM;
 end

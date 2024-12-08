@@ -21,16 +21,20 @@ classes(classes_numericas >= 5 & classes_numericas <= 6) = {'FIM DE SEMANA'};
 classes = categorical(classes);
 
 % Associa cada produto a uma classe
-[classes_produto, probsSEM, probsFIMSEM] = calcProbCaract(produtos, classes, caracteristicas,h);
+[classes_produto, product_prob, FREQ] = calcProbCaract(produtos, classes, caracteristicas,h);
 
-% Cria uma matriz com o produto e a sua classe respetiva
-prod_class_matrix = [caracteristicas classes_produto];
-product_prob = [probsSEM probsFIMSEM];
+
+classes_produto_cell = cellstr(classes_produto);
+
+% Cria uma matriz com o produto, a sua classe respetiva e as suas
+% probabilidades
+product_class_probs_matrix = [caracteristicas(:), classes_produto_cell(:), num2cell(product_prob), num2cell(FREQ)];
+
 
 % Criação da matriz Treino (talvez não seja preciso, pois as nossas
 % P(car_i|classe) já é retirada automaticamente pelas caracteristicas
 Treino = treino(carrinhos, caracteristicas,h);
-Classes_carrinho = classificar(carrinhos, caracteristicas, product_prob2, h);
+%Classes_carrinho = classificar(carrinhos, caracteristicas, product_prob2, h);
 delete(h)
 
 %% Probabilidades das classes: "SEMANA" e "FIM DE SEMANA"
@@ -38,37 +42,57 @@ prob_sem = sum(classes == 'SEMANA')/length(classes);     % P('SEMANA')
 prob_fimsem = sum(classes == 'FIM DE SEMANA')/length(classes);     % P('FIM DE SEMANA')
 fprintf("\nProbabilidades de cada classe:\nP('SEMANA') = %.4f\nP('FIM SEMANA') = %.4f\n", prob_sem, prob_fimsem);
 
-%% Inicializar Bloom Filter
-BF = inicializarBF(5000);   % 5000 é só um valor atoa (possivelmente a alterar depois)
+%% Inicializar Bloom Filter e agregados
+BF = inicializarBF(5000);   % 5000 é só um valor aleatório (possivelmente a alterar depois)
+
+k = 3;  % numero de funcoes de hash
+% Adaptado de 'Symbolic Math Toolbox'
+range = [1 999999];
+p = nthprime(randi(range))
+% -------------------------
 
 %% Pedir input ao utilizador
+clc;    % limpa o terminal
 itensCarrinho = 0;
-carrinho = cell();
-recomendacoes = cell();
+carrinho = cell(50, 1);
+recomendacoes = cell(10, 1);    % possivelmente inicializar como um cell array dos produtos mais comprados
+                                % sem interessar a classe, apenas como recomendação inicial ou quando
+                                % classe = "N/A"
 
 while itensCarrinho ~= 50
-    fprintf("Itens: %d/50\n\n1 - Adicionar Item\n2 - Sair\n\n", itensCarrinho);
-    opt = input("Opção -> ");
+    fprintf("Itens: %d/50\n\n<strong>1</strong> - Adicionar Item\n<strong>2</strong> - Sair\n\n", itensCarrinho);
+    opt = input("<strong>Opção -> </strong>", "s");
+    clc;    % limpa o terminal
+
+    % Validar input
+    if ~ismember(opt, {'1', '2'})
+        fprintf("<strong>Opção inválida!</strong>\n\n");
+        continue;
+    end
+
+    opt = str2double(opt);
     switch opt
         case 1  % Processo de adicionar item ao carrinho (e atualização das recomendações)
-            fprintf("Recomendações:\n");
-            mostrar_recomendacoes();
-            produto = input("Produto -> ", "s");
+            recomendacoes = atualizar_recomendacoes(recomendacoes, carrinho, BF, k, caracteristicas, product_prob, FREQ);
+            mostrar(recomendacoes, carrinho, itensCarrinho);
+            produto = input("<strong>Produto -> </strong>", "s");
+            clc;    % limpa o terminal
+
             if ~ismember(caracteristicas, produto)
-                fprintf("Produto não encontrado!\n");
-            elseif verificarBF(elemento, BF, k)
-                fprintf("Produto já adicionado!");
+                fprintf("<strong>Produto não encontrado!</strong>\n");
+
+            elseif verificarBF(produto, BF, k)
+                fprintf("<strong>Produto já adicionado!</strong>\n");
+
             else
+                BF = adicionarBF(produto, BF, k);
                 itensCarrinho = itensCarrinho+1;
-                recomendacoes = atualizar_recomendacoes(carrinho);
+                carrinho{itensCarrinho, 1} = produto;
             end
             
         case 2  % Termina a execução do programa
             disp("<strong>Exiting...</strong>");
             return
-
-        otherwise
-            fprintf("<strong>Opção inválida!</strong>\n");
     end
 end
 

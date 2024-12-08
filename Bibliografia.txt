@@ -1,0 +1,6 @@
+Bibliografia:
+Geração de Números Primos:
+https://www.mathworks.com/help/symbolic/nthprime.html
+
+Tamanho Ótimo para um Bloom Filter
+https://hur.st/bloomfilter/?n=50&p=0.000001&m=&k=100

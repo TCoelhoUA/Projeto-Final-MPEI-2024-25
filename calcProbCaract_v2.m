@@ -47,4 +47,6 @@ function [classes_produtos, probsSEM, probsFIMSEM] = calcProbCaract(produtos, cl
         end
         waitbar(2/6+1/6*car/length(caracteristicas), h, 'A atribuir classes aos produtos...');
     end
+
+    
 end
