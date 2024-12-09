@@ -1,11 +1,12 @@
-h = waitbar(0, 'A ler os produtos...', 'Name', 'A processar dados (Por favor espere)');
-
 %% Leitura dos data-sets
+h = waitbar(0, 'A ler os produtos...', 'Name', 'A processar dados (Por favor espere)');
 dados_produtos = readcell("produtos_simplified.csv");
+
 waitbar(1/6, h, 'A ler os carrinhos...');
 carrinhos = readcell("carrinhos_simplified.csv");
-waitbar(2/6, h, 'A atribuir classes aos produtos...');
+
 %% Parse dos dados
+waitbar(2/6, h, 'A atribuir classes aos produtos...');
 produtos = dados_produtos(2:end, 3);               % Vetor com os vários produtos comprados (separadamente)
 caracteristicas = unique(produtos);                % Vetor com os tipos distintos de produtos
 
@@ -29,7 +30,6 @@ classes_produto_cell = cellstr(classes_produto);
 % Cria uma matriz com o produto, a sua classe respetiva e as suas
 % probabilidades
 product_class_probs_matrix = [caracteristicas(:), classes_produto_cell(:), num2cell(product_prob), num2cell(FREQ)];
-
 
 % Criação da matriz Treino (talvez não seja preciso, pois as nossas
 % P(car_i|classe) já é retirada automaticamente pelas caracteristicas
