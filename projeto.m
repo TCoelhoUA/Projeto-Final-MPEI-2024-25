@@ -42,22 +42,21 @@ prob_sem = sum(classes == 'SEMANA')/length(classes);     % P('SEMANA')
 prob_fimsem = sum(classes == 'FIM DE SEMANA')/length(classes);     % P('FIM DE SEMANA')
 fprintf("\nProbabilidades de cada classe:\nP('SEMANA') = %.4f\nP('FIM SEMANA') = %.4f\n", prob_sem, prob_fimsem);
 
-%% Gerar shingles e assinaturas (NÃO IMPLEMENTADO)
-%{
+%% Gerar shingles e assinaturas
+
 % Shingles
 ks = 2; % 2-shingles
 shingles = gerar_shingles(caracteristicas, ks);
 
 % Assinaturas
 k = 200;
-R = randi(127, 1, 3);
+R = randi(152, 1, 152); % 152 número de produtos diferentes
 p = 1234567;
 while ~isprime(p)
     p = p+2;
 end
 
-assinaturas = calcular_assinaturas(shingles, k, R, p);
-%}
+assinaturas = calcular_assinaturas();
 %% Inicializar Bloom Filter e agregados
 BF = inicializarBF(5000);   % 5000 é só um valor aleatório (possivelmente a alterar depois)
 

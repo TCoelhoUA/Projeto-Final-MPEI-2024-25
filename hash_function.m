@@ -4,6 +4,8 @@ function hc = hash_function(elemento, k, R, p)
     
     codigos_ASCII = double(elemento);   % vetor com código ASCII
     r = R(k,:);
-
+    disp(codigos_ASCII);
+    disp(r);
+    disp(p);
     hc = mod(codigos_ASCII * r', p);
 end
