@@ -1,9 +1,11 @@
 %% Leitura dos data-sets
 h = waitbar(0, 'A ler os produtos...', 'Name', 'A processar dados (Por favor espere)');
-dados_produtos = readcell("produtos_simplified.csv");
+dados_produtos = readcell("produtos_simplified.csv");  % dataset simplificado (para demonstração)
+%dados_produtos = readcell("produtos.csv");  % dataset original (para uso final)
 
 waitbar(1/6, h, 'A ler os carrinhos...');
-carrinhos = readcell("carrinhos_simplified.csv");
+carrinhos = readcell("carrinhos_simplified.csv");  % dataset simplificado (para demonstração)
+%carrinhos = readcell("carrinhos.csv");  % dataset original (para uso final)
 
 %% Parse dos dados
 waitbar(2/6, h, 'A atribuir classes aos produtos...');
@@ -22,18 +24,18 @@ classes(classes_numericas >= 5 & classes_numericas <= 6) = {'FIM DE SEMANA'};
 classes = categorical(classes);
 
 % Associa cada produto a uma classe
-[classes_produto, product_prob, FREQ] = calcProbCaract(produtos, classes, caracteristicas,h);
+[classes_produto, product_prob, freq] = calcProbCaract(produtos, classes, caracteristicas, h);
 
 
 classes_produto_cell = cellstr(classes_produto);
 
-% Cria uma matriz com o produto, a sua classe respetiva e as suas
-% probabilidades
-product_class_probs_matrix = [caracteristicas(:), classes_produto_cell(:), num2cell(product_prob), num2cell(FREQ)];
+% Cria uma matriz com os produtos, as suas classes respetivas, as suas
+% probabilidades e as suas frequências
+product_class_probs_matrix = [caracteristicas(:), classes_produto_cell(:), num2cell(product_prob), num2cell(freq)];
 
 % Criação da matriz Treino (talvez não seja preciso, pois as nossas
 % P(car_i|classe) já é retirada automaticamente pelas caracteristicas
-Treino = treino(carrinhos, caracteristicas,h);
+Treino = treino(carrinhos, caracteristicas, h);
 %Classes_carrinho = classificar(carrinhos, caracteristicas, product_prob2, h);
 delete(h)
 
@@ -45,7 +47,7 @@ fprintf("\nProbabilidades de cada classe:\nP('SEMANA') = %.4f\nP('FIM SEMANA') =
 %% Gerar shingles e assinaturas
 
 % Shingles
-ks = 3; % 2-shingles
+ks = 2; % 2-shingles
 shingles = gerar_shingles(caracteristicas, ks);
 
 % Assinaturas
@@ -67,14 +69,15 @@ k = 3;  % numero de funcoes de hash
 
 %% Pedir input ao utilizador
 clc;    % limpa o terminal
-itensCarrinho = 0;
+itens_carrinho = 0;
 carrinho = cell(50, 1);
+carrinho(:) = {''};
 recomendacoes = cell(10, 1);    % possivelmente inicializar como um cell array dos produtos mais comprados
                                 % sem interessar a classe, apenas como recomendação inicial ou quando
                                 % classe = "N/A"
 
-while itensCarrinho ~= 50
-    fprintf("Itens: %d/50\n\n<strong>1</strong> - Adicionar Item\n<strong>2</strong> - Sair\n\n", itensCarrinho);
+while itens_carrinho ~= 50
+    fprintf("Itens: %d/50\n\n<strong>1</strong> - Adicionar Item\n<strong>2</strong> - Sair\n\n", itens_carrinho);
     opt = input("<strong>Opção -> </strong>", "s");
     clc;    % limpa o terminal
 
@@ -87,44 +90,56 @@ while itensCarrinho ~= 50
     opt = str2double(opt);
     switch opt
         case 1  % Processo de adicionar item ao carrinho (e atualização das recomendações)
-            recomendacoes = atualizar_recomendacoes(recomendacoes, carrinho, BF, k, caracteristicas, product_prob, FREQ);
-            mostrar(recomendacoes, carrinho, itensCarrinho);
+            recomendacoes = atualizar_recomendacoes(recomendacoes, carrinho, BF, k, caracteristicas, product_prob, freq);
+            carrinhos_similares = atualizar_carrinhos_similares(carrinho, carrinhos);
+            mostrar(recomendacoes, carrinho, carrinhos_similares, itens_carrinho);
             produto = input("<strong>Produto -> </strong>", "s");
             clc;    % limpa o terminal
 
             if ~ismember(produto, caracteristicas)
                 fprintf("<strong>Produto não encontrado!</strong>\n");
-                closest_products = procurar_prod_mais_prox(produto, ks, nhf, R, p, MA_produtos, caracteristicas);
-                i = 1;
-                while verificarBF(char(closest_products(i)), BF, k)
-                    i = i+1; %ignora os produtos que já estão no carrinho;
-                end
-                available_closestProduct = char(closest_products(i));
-                while 1
-                    fprintf("Será que quiz dizer: %s?\n", available_closestProduct);
-                    fprintf("<strong>1</strong> - Sim\n<strong>2</strong> - Não\n\n");
-                    opt2 = input("<strong>Opção -> </strong>", "s");
-                    clc;
-                    if ~ismember(opt2, {'1', '2'})
-                        fprintf("<strong>Opção inválida!</strong>\n\n");
-                        continue;
+                if length(produto) >= ks    % se o nº de caracteres for maior ou igual  do que o tamanho
+                                            % dos shingles, então recomenda-se uma correção de produto
+                    closest_products = procurar_prod_mais_prox(produto, ks, nhf, R, p, MA_produtos, caracteristicas);
+                    i = 1;
+                    while verificarBF(char(closest_products(i)), BF, k)
+                        i = i+1; %ignora os produtos que já estão no carrinho;
                     end
-                    opt2 = str2double(opt2);
-                    switch opt2
-                        case 1
-                            [carrinho, itensCarrinho, BF] = adicionar_ao_carrinho(available_closestProduct, BF, k, carrinho, itensCarrinho);
+                    closest_product = char(closest_products(i));
+                    while 1
+                        fprintf("\nSerá que quiz dizer <strong>%s</strong>?\n", closest_product);
+                        fprintf("\n<strong>1</strong> - Sim\n<strong>2</strong> - Não\n\n");
+                        opt2 = input("<strong>Opção -> </strong>", "s");
+                        clc;
+                        if ~ismember(opt2, {'1', '2'})
+                            fprintf("<strong>Opção inválida!</strong>\n");
+                            continue;
+                        end
+                        opt2 = str2double(opt2);
+                        switch opt2
+                            case 1
+                                [carrinho, itens_carrinho, BF] = adicionar_ao_carrinho(closest_product, BF, k, carrinho, itens_carrinho);
+                        end
+                        break;
                     end
-                    break;
                 end
-
             elseif verificarBF(produto, BF, k)
                 fprintf("<strong>Produto já adicionado!</strong>\n");
 
             else
-                [carrinho, itensCarrinho, BF] = adicionar_ao_carrinho(produto, BF, k, carrinho, itensCarrinho);
+                [carrinho, itens_carrinho, BF] = adicionar_ao_carrinho(produto, BF, k, carrinho, itens_carrinho);
             end
             
         case 2  % Termina a execução do programa
+            
+            fprintf("Deseja guardar a sua lista de compras?\n\n<strong>1</strong> - Sim\n<strong>2</strong> - Não\n\n");
+            opt = input("<strong>Opção -> </strong>", "s");
+            clc;    % limpa o terminal
+
+            if ismember(opt, {'1'})
+                guardar_ficheiro(carrinho);
+            end
+            
             disp("<strong>Exiting...</strong>");
             return
     end

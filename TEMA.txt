@@ -1,9 +1,9 @@
 ----------- TEMA -----------
 Lista de compras inteligente
 
-Naïve Bayes= Prever itens a adicionar a um carrinho com bas em compras passadas
+Naïve Bayes: Recomendar itens ao utilizador, conforme o seu carrinho vai alterando de classe
 Bloom Filter: Verificar a existência de um produto no carrinho
-MinHash: Sugerir itens de carrinho similares passados
+MinHash: Sugerir itens de carrinho similares passados e correção ortográfica
 
 carrinho: https://www.kaggle.com/datasets/irfanasrullah/groceries
 
@@ -17,3 +17,6 @@ https://www.mathworks.com/help/symbolic/nthprime.html
 
 Tamanho Ótimo para um Bloom Filter
 https://hur.st/bloomfilter/?n=50&p=0.000001&m=&k=100
+
+Selecionar os 5 maiores valores de uma matriz
+https://www.mathworks.com/matlabcentral/answers/452991-how-to-select-the-top-5-five-values-in-a-matrix

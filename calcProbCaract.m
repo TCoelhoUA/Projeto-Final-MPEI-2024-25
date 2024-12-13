@@ -1,4 +1,4 @@
-function [classes_produtos, product_prob, FREQ] = calcProbCaract(produtos, classes, caracteristicas,h)
+function [classes_produtos, product_prob, freq] = calcProbCaract(produtos, classes, caracteristicas,h)
     % Associa uma classe a cada produto com base em compras individuais de
     % cada produto no passado
     %
@@ -19,14 +19,14 @@ function [classes_produtos, product_prob, FREQ] = calcProbCaract(produtos, class
     classes_produtos = categorical(zeros(size(caracteristicas, 1),1));
     probsSEM = zeros(length(caracteristicas), 1);
     probsFIMSEM = zeros(length(caracteristicas), 1);
-    FREQ = zeros(length(caracteristicas), 1);
+    freq = zeros(length(caracteristicas), 1);
 
     for car=1:length(caracteristicas)
-        freq = 0; % frequencia do produto
+        frequencia = 0; % frequenciauencia do produto
 
         for produto=1:length(produtos)
             if strcmp(produtos{produto}, caracteristicas{car})
-                freq = freq + 1;
+                frequencia = frequencia + 1;
                 if classes(produto) == "SEMANA"
                     probsSEM(car) = probsSEM(car) +1;
                 else
@@ -34,13 +34,13 @@ function [classes_produtos, product_prob, FREQ] = calcProbCaract(produtos, class
                 end
             end
         end
-        FREQ(car) = freq;
-        if (freq == 0)
+        freq(car) = frequencia;
+        if (frequencia == 0)
             classes_produtos(car) = 'N/A';
             break;
         end
-        probsSEM(car) = probsSEM(car)/freq;
-        probsFIMSEM(car) = probsFIMSEM(car)/freq;
+        probsSEM(car) = probsSEM(car)/frequencia;
+        probsFIMSEM(car) = probsFIMSEM(car)/frequencia;
         if (probsSEM(car) > probsFIMSEM(car))
             classes_produtos(car) = 'SEMANA';
         else

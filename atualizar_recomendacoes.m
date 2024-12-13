@@ -1,4 +1,4 @@
-function recomendacoes = atualizar_recomendacoes(recomendacoes, carrinho, BF, k, caracteristicas, product_prob, FREQ)
+function recomendacoes = atualizar_recomendacoes(recomendacoes, carrinho, BF, k, caracteristicas, product_prob, freq)
     % Esta função atualiza as recomendações com base nos produtos
     % que estão atualmente no carrinho
     %
@@ -15,14 +15,12 @@ function recomendacoes = atualizar_recomendacoes(recomendacoes, carrinho, BF, k,
     % Falta fazer a verificação do item do carrinho no BF (não se deve recomendar items que já estão no carrinho)
     if strcmp(classe_carrinho, "SEMANA")
         [~, idx] = sort(product_prob(:,1), 'descend');
-        %[sorted, idx] = sort(product_prob(:,1), 'descend');
-        %sorted = sort(product_prob(:,1), 'descend');
+
     elseif strcmp(classe_carrinho, "FIM DE SEMANA")
         [~, idx] = sort(product_prob(:,2), 'descend');
-        %[sorted, idx] = sort(product_prob(:,2), 'descend');
-        %sorted = sort(product_prob(:,2), 'descend');
+
     else    % classe = "N/A"
-        [~, idx] = sort(FREQ(:), 'descend');
+        [~, idx] = sort(freq(:), 'descend');
     end
 
     % Verifica se o produto a recomendar existe no carrinho ou não, se já

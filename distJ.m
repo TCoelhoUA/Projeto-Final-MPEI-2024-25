@@ -1,20 +1,25 @@
 function distancias = distJ(carrinho, carrinhos)
-    %{
-
-    FAZER MATRIZ MH PARA APENAS COMPARAR COM OS HASH CODES QUANDO O
-    CARRRINHO ATUALIZA
-
-    disp(carrinhos)
-    distancias = zeros(length(carrinhos), 1);   % vetor com distâncias de jaccard
+    %distancias = zeros(length(carrinhos)-1, 1);   % vetor com distâncias de jaccard
+    distancias = [];
+    
+    carrinho_mat = {};
+    for item = 1:50
+        if ismissing(carrinho{item})
+            break
+        end
+        carrinho_mat{end+1} = carrinho{item};
+    end
 
     for c = 2:length(carrinhos)
-        car = [];
-        if ~ismissing(carrinhos{c,:})
-            car(end+1) =
+        car = {};
+        for i = 1:11
+            if ismissing(carrinhos{c,i})
+                break
+            end
+            car{end+1} = carrinhos{c,i};
         end
-        idx = ~ismissing(string(carrinhos(c,:)));
-        distJ = intersect(carrinhos(c,:), carrinho)/union(carrinhos(c,:), carrinho);
+        distJ = numel(intersect(car, carrinho_mat))/numel(union(car, carrinho_mat));
+        distancias(end+1, 1) = distJ;
     end
-    %}
 end
 
