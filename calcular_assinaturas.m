@@ -1,44 +1,23 @@
-function assinaturas = calcular_assinaturas(Set, k, R, p)
-    %% Calcular matriz MinHash (MH)
-    MH = zeros(k, length(Set));
-    Set = Set';
-    % para cada hash functions
-    for hf=1:k
-        % para cada user (mais propriamente conjunto desse user)
-        for filme = 1:length(Set)
-            conjunto = Set{filme};
-            hash_codes = zeros(1, length(conjunto));
-            % para cada elemento desse conjuntos
-            for el=1:length(conjunto)
-                % aplicar hash function (k)
-                elemento = conjunto{el};
-                hash_codes(el) = hash_function(elemento, hf, R, p);
+function MA = calcular_assinaturas(Set, nhf, R, p)
+%UNTITLED3 Summary of this function goes here
+%   Detailed explanation goes here
+    
+    Np = length(Set);
+    MA = zeros(nhf, Np);
+    
+    % para cada funcao de hash
+    for hf = 1:nhf
+    % para cada use (mais propriamente conjunto desse user)
+        for conjunto_i= 1:Np
+            conjunto = Set{conjunto_i};
+            hc = zeros(1, length(conjunto));
+            for nelem = 1:length(conjunto)
+                elemento = conjunto{nelem};
+                hc(nelem) = hash_function(elemento, hf, R, p);
             end
-            % obter hash code minimo (mais baixo)
-            minhash = min(conjunto{el});
+            minHash = min(hc);
 
-            % guardar em MH
-            MH(hf, filme) = minhash;
+            MA(hf, conjunto_i) = minHash;
         end
     end
-    delete(h);
-
-    %{
-    %% Calcular distância de Jaccard (distJ)
-    % para cada user
-    for n1=1:Nu
-        % para todos os outros
-        for n2=n1:Nu
-            % obter as 2 assinaturas (que são colunas)
-            assinatura1 = MH(:,n1);
-            assinatura2 = MH(:,n2);
-
-            % calcular numero de valores iguais na mesma posição
-            assinaturas_iguais = sum(assinatura1 == assinatura2);
-
-            % distância = número de valores iguais/k
-            distJ = 1 - assinaturas_iguais/k;
-        end
-    end
-    %}
 end

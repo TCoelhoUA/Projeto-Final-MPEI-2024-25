@@ -45,25 +45,24 @@ fprintf("\nProbabilidades de cada classe:\nP('SEMANA') = %.4f\nP('FIM SEMANA') =
 %% Gerar shingles e assinaturas
 
 % Shingles
-ks = 2; % 2-shingles
+ks = 3; % 2-shingles
 shingles = gerar_shingles(caracteristicas, ks);
 
 % Assinaturas
-k = 200;
-R = randi(152, 1, 152); % 152 número de produtos diferentes
+nhf = 200;
 p = 1234567;
 while ~isprime(p)
     p = p+2;
 end
+R = randi(p, nhf, ks);
+MA_produtos = calcular_assinaturas(shingles, nhf, R, p);
 
-assinaturas = calcular_assinaturas();
 %% Inicializar Bloom Filter e agregados
 BF = inicializarBF(5000);   % 5000 é só um valor aleatório (possivelmente a alterar depois)
-
 k = 3;  % numero de funcoes de hash
 % Adaptado de 'Symbolic Math Toolbox'
-range = [1 999999];
-p = nthprime(randi(range))
+%range = [1 999999];
+%p = nthprime(randi(range));
 % -------------------------
 
 %% Pedir input ao utilizador
@@ -93,16 +92,36 @@ while itensCarrinho ~= 50
             produto = input("<strong>Produto -> </strong>", "s");
             clc;    % limpa o terminal
 
-            if ~ismember(caracteristicas, produto)
+            if ~ismember(produto, caracteristicas)
                 fprintf("<strong>Produto não encontrado!</strong>\n");
+                closest_products = procurar_prod_mais_prox(produto, ks, nhf, R, p, MA_produtos, caracteristicas);
+                i = 1;
+                while verificarBF(char(closest_products(i)), BF, k)
+                    i = i+1; %ignora os produtos que já estão no carrinho;
+                end
+                available_closestProduct = char(closest_products(i));
+                while 1
+                    fprintf("Será que quiz dizer: %s?\n", available_closestProduct);
+                    fprintf("<strong>1</strong> - Sim\n<strong>2</strong> - Não\n\n");
+                    opt2 = input("<strong>Opção -> </strong>", "s");
+                    clc;
+                    if ~ismember(opt2, {'1', '2'})
+                        fprintf("<strong>Opção inválida!</strong>\n\n");
+                        continue;
+                    end
+                    opt2 = str2double(opt2);
+                    switch opt2
+                        case 1
+                            [carrinho, itensCarrinho, BF] = adicionar_ao_carrinho(available_closestProduct, BF, k, carrinho, itensCarrinho);
+                    end
+                    break;
+                end
 
             elseif verificarBF(produto, BF, k)
                 fprintf("<strong>Produto já adicionado!</strong>\n");
 
             else
-                BF = adicionarBF(produto, BF, k);
-                itensCarrinho = itensCarrinho+1;
-                carrinho{itensCarrinho, 1} = produto;
+                [carrinho, itensCarrinho, BF] = adicionar_ao_carrinho(produto, BF, k, carrinho, itensCarrinho);
             end
             
         case 2  % Termina a execução do programa
