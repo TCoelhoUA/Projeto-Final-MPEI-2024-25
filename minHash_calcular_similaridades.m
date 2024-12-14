@@ -10,6 +10,6 @@ function similarities = minHash_calcular_similaridades(assinatura,MA)
     n_products = size(MA, 2);
     similarities = zeros(1, n_products);
     for i = 1:n_products
-        similarities(i) = sum(assinatura == MA(:, i)) / length(Signature);
+        similarities(i) = sum(assinatura == MA(:, i)) / length(assinatura);
     end
 end

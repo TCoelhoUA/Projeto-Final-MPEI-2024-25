@@ -32,7 +32,7 @@ function recomendacoes = atualizar_recomendacoes(carrinho, BF, k, caracteristica
     total = 1;
     c = 1;
     while total ~= 11
-        if ~verificarBF(caracteristicas{idx(c), 1}, BF, k)
+        if ~BF_verificar(caracteristicas{idx(c), 1}, BF, k)
             recomendacoes{total, 1} = caracteristicas(idx(c));
             total = total+1;
         end
