@@ -1,13 +1,13 @@
-%% Leitura dos data-sets
+%% Leitura  e interpretação dos datasets
 h = waitbar(0, 'A ler os produtos...', 'Name', 'A processar dados (Por favor espere)');
-dados_produtos = readcell("produtos_simplified.csv");  % dataset simplificado (para demonstração)
+dados_produtos = readcell("produtos.csv");  % dataset simplificado (para demonstração)
 %dados_produtos = readcell("produtos.csv");  % dataset original (para uso final)
 
 waitbar(1/6, h, 'A ler os carrinhos...');
-carrinhos = readcell("carrinhos_simplified.csv");  % dataset simplificado (para demonstração)
+carrinhos = readcell("carrinhos.csv");  % dataset simplificado (para demonstração)
 %carrinhos = readcell("carrinhos.csv");  % dataset original (para uso final)
 
-%% Parse dos dados
+% Parse dos dados
 waitbar(2/6, h, 'A atribuir classes aos produtos...');
 produtos = dados_produtos(2:end, 3);               % Vetor com os vários produtos comprados (separadamente)
 caracteristicas = unique(produtos);                % Vetor com os tipos distintos de produtos
@@ -39,12 +39,12 @@ Treino = treino(carrinhos, caracteristicas, h);
 %Classes_carrinho = bayes_classificar(carrinhos, caracteristicas, product_prob2, h);
 delete(h)
 
-%% Probabilidades das classes: "SEMANA" e "FIM DE SEMANA"
+% Probabilidades das classes: "SEMANA" e "FIM DE SEMANA"
 prob_sem = sum(classes == 'SEMANA')/length(classes);     % P('SEMANA')
 prob_fimsem = sum(classes == 'FIM DE SEMANA')/length(classes);     % P('FIM DE SEMANA')
 fprintf("\nProbabilidades de cada classe:\nP('SEMANA') = %.4f\nP('FIM SEMANA') = %.4f\n", prob_sem, prob_fimsem);
 
-%% Gerar shingles e assinaturas
+% Gerar shingles e assinaturas
 
 % Shingles
 ks = 2; % 2-shingles
@@ -59,7 +59,8 @@ end
 R = randi(p, nhf, ks);
 MA_produtos = minHash_calcular_assinaturas(shingles, nhf, R, p);
 
-%% Inicializar Bloom Filter e agregados
+%% Interface -Inicialização do Bloom Filter e input do utilizador
+% Inicializar Bloom Filter e agregados
 BF = BF_inicializar(5000);   % 5000 é só um valor aleatório (possivelmente a alterar depois)
 k_bloom = 3;  % numero de funcoes de hash
 % Adaptado de 'Symbolic Math Toolbox'
@@ -67,17 +68,19 @@ k_bloom = 3;  % numero de funcoes de hash
 %p = nthprime(randi(range));
 % -------------------------
 
-%% Pedir input ao utilizador
+
+% Pedir input ao utilizador
 clc;    % limpa o terminal
 itens_carrinho = 0;
-carrinho = cell(50, 1);
+car_size = 11;
+carrinho = cell(car_size, 1);
 carrinho(:) = {''};
 recomendacoes = cell(10, 1);    % possivelmente inicializar como um cell array dos produtos mais comprados
                                 % sem interessar a classe, apenas como recomendação inicial ou quando
                                 % classe = "N/A"
 
-while itens_carrinho ~= 50
-    fprintf("Itens: %d/50\n\n<strong>1</strong> - Adicionar Item\n<strong>2</strong> - Sair\n\n", itens_carrinho);
+while itens_carrinho < car_size
+    fprintf("Itens: %d/%d\n\n<strong>1</strong> - Adicionar Item\n<strong>2</strong> - Sair\n\n", itens_carrinho, car_size);
     opt = input("<strong>Opção -> </strong>", "s");
     clc;    % limpa o terminal
 
@@ -91,7 +94,7 @@ while itens_carrinho ~= 50
     switch opt
         case 1  % Processo de adicionar item ao carrinho (e atualização das recomendações)
             recomendacoes = atualizar_recomendacoes(carrinho, BF, k_bloom, caracteristicas, product_prob, freq);
-            carrinhos_similares = atualizar_carrinhos_similares(carrinho, carrinhos);
+            carrinhos_similares = atualizar_carrinhos_similares(carrinho, carrinhos, car_size);
             mostrar(recomendacoes, carrinho, carrinhos_similares, itens_carrinho);
             produto = input("<strong>Produto -> </strong>", "s");
             clc;    % limpa o terminal
@@ -144,6 +147,18 @@ while itens_carrinho ~= 50
             return
     end
 end
+
+disp("<strong>O carrinho está cheio!</strong>\n")
+fprintf("Deseja guardar a sua lista de compras?\n\n<strong>1</strong> - Sim\n<strong>2</strong> - Não\n\n");
+opt = input("<strong>Opção -> </strong>", "s");
+clc;    % limpa o terminal
+
+if ismember(opt, {'1'})
+    guardar_ficheiro(carrinho);
+end
+
+disp("<strong>Exiting...</strong>");
+return
 
 %% TESTE 1 - Dá print dos produtos e quando se vendem mais (semana ou fim de semana, proporcional ao dias: 5 e 2)
 %produtos = categorical(dados_produtos(2:end, 3));

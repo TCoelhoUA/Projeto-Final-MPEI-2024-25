@@ -26,6 +26,6 @@ function mostrar(recomendacoes, carrinho, carrinhos_similares, itens_carrinho)
         fprintf("• %s\n", carrinho{p, 1});
         p = p+1;
     end
-    fprintf("\nItens: %d/50\n\n", itens_carrinho)
+    fprintf("\nItens: %d/11\n\n", itens_carrinho)
 end
 

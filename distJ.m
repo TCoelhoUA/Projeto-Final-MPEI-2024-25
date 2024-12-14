@@ -1,9 +1,9 @@
-function distancias = distJ(carrinho, carrinhos)
+function distancias = distJ(carrinho, carrinhos, car_size)
     %distancias = zeros(length(carrinhos)-1, 1);   % vetor com distâncias de jaccard
     distancias = [];
     
     carrinho_mat = {};
-    for item = 1:50
+    for item = 1:car_size
         if ismissing(carrinho{item})
             break
         end
