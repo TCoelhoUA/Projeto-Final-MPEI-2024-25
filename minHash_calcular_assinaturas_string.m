@@ -1,15 +1,15 @@
-function assinaturas = calc_assinaturas_minHash_string(shingles,nhf, R, p)
-    % <strong>USAGE: calc_assinaturas_minHash_string</strong>
-    % EXPLICAÇÃO AQUI
+function assinaturas = minHash_calcular_assinaturas_string(shingles,nhf, R, p)
+    % <strong>USAGE: minHash_calcular_assinaturas_string(shingles,nhf, R, p)</strong>
+    % Calcula as assinaturas de uma dada string por nhf hash functions
     %
     % <strong>Input:</strong>
-    % <strong>shingles</strong> - EXPLICAÇÃO AQUI
+    % <strong>shingles</strong> - array com os shingles da string
     % <strong>nhf</strong> - Número de funções de hash
-    % <strong>R</strong> - EXPLICAÇÃO AQUI
+    % <strong>R</strong> - Matriz aleatória
     % <strong>p</strong> - Número primo
     %
     % <strong>Output:</strong>
-    % <strong>assinaturas</strong> - Assinaturas de cada produto
+    % <strong>assinaturas</strong> - Assinaturas do produto para cada hash funtion
     
     assinaturas = zeros(nhf, 1); % linha = hash function
     

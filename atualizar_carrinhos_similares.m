@@ -17,7 +17,6 @@ function [carrinhos_similares, idx] = atualizar_carrinhos_similares(carrinho, ca
     carrinhos_similares = cell(5, 11);
     disp(carrinhos_similares)
     carrinhos_similares(:) = '';
-    disp(carrinhos_similares)
     for i = 1:5
         for item = 1:11
             if ~ismissing(carrinhos{idx(i), item})

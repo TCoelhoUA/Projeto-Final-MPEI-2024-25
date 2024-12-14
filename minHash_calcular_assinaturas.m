@@ -1,15 +1,15 @@
-function MA = calcular_assinaturas(shingles, nhf, R, p)
-    % <strong>USAGE: calcular_assinaturas</strong>
+function MA = minHash_calcular_assinaturas(shingles, nhf, R, p)
+    % <strong>USAGE: minHash_calcular_assinaturas(shingles, nhf, R, p)</strong>
     % Calcula a matriz assinatura
     %
     % <strong>Input:</strong>
-    % <strong>shingles</strong> - Shingles dos produtos
-    % <strong>nhf</strong> - Número de funções de hash
-    % <strong>R</strong> - EXPLICAÇÃO AQUI
-    % <strong>p</strong> - Número de primo
+    % <strong>shingles</strong> -  Shingles dos produtos
+    % <strong>nhf</strong>      -  Número de funções de hash
+    % <strong>R</strong>        -  Matriz aleatória
+    % <strong>p</strong>        -  Número de primo
     %
     % <strong>Output:</strong>
-    % <strong>MA</strong> - Matriz assinatura
+    % <strong>MA</strong>       - Matriz assinatura
     
     Np = length(shingles);
     MA = zeros(nhf, Np);

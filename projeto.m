@@ -24,7 +24,7 @@ classes(classes_numericas >= 5 & classes_numericas <= 6) = {'FIM DE SEMANA'};
 classes = categorical(classes);
 
 % Associa cada produto a uma classe
-[classes_produto, product_prob, freq] = calculo_prob_caract(produtos, classes, caracteristicas, h);
+[classes_produto, product_prob, freq] = bayes_calculo_prob_caract(produtos, classes, caracteristicas, h);
 
 
 classes_produto_cell = cellstr(classes_produto);
@@ -36,7 +36,7 @@ product_class_probs_matrix = [caracteristicas(:), classes_produto_cell(:), num2c
 % Criação da matriz Treino (talvez não seja preciso, pois as nossas
 % P(car_i|classe) já é retirada automaticamente pelas caracteristicas
 Treino = treino(carrinhos, caracteristicas, h);
-%Classes_carrinho = classificar(carrinhos, caracteristicas, product_prob2, h);
+%Classes_carrinho = bayes_classificar(carrinhos, caracteristicas, product_prob2, h);
 delete(h)
 
 %% Probabilidades das classes: "SEMANA" e "FIM DE SEMANA"
@@ -48,7 +48,7 @@ fprintf("\nProbabilidades de cada classe:\nP('SEMANA') = %.4f\nP('FIM SEMANA') =
 
 % Shingles
 ks = 2; % 2-shingles
-shingles = gerar_shingles(caracteristicas, ks);
+shingles = minHash_gerar_shingles(caracteristicas, ks);
 
 % Assinaturas
 nhf = 200;
@@ -57,11 +57,11 @@ while ~isprime(p)
     p = p+2;
 end
 R = randi(p, nhf, ks);
-MA_produtos = calcular_assinaturas(shingles, nhf, R, p);
+MA_produtos = minHash_calcular_assinaturas(shingles, nhf, R, p);
 
 %% Inicializar Bloom Filter e agregados
-BF = inicializarBF(5000);   % 5000 é só um valor aleatório (possivelmente a alterar depois)
-k = 3;  % numero de funcoes de hash
+BF = BF_inicializar(5000);   % 5000 é só um valor aleatório (possivelmente a alterar depois)
+k_bloom = 3;  % numero de funcoes de hash
 % Adaptado de 'Symbolic Math Toolbox'
 %range = [1 999999];
 %p = nthprime(randi(range));
@@ -90,7 +90,7 @@ while itens_carrinho ~= 50
     opt = str2double(opt);
     switch opt
         case 1  % Processo de adicionar item ao carrinho (e atualização das recomendações)
-            recomendacoes = atualizar_recomendacoes(carrinho, BF, k, caracteristicas, product_prob, freq);
+            recomendacoes = atualizar_recomendacoes(carrinho, BF, k_bloom, caracteristicas, product_prob, freq);
             carrinhos_similares = atualizar_carrinhos_similares(carrinho, carrinhos);
             mostrar(recomendacoes, carrinho, carrinhos_similares, itens_carrinho);
             produto = input("<strong>Produto -> </strong>", "s");
@@ -100,9 +100,9 @@ while itens_carrinho ~= 50
                 fprintf("<strong>Produto não encontrado!</strong>\n");
                 if length(produto) >= ks    % se o nº de caracteres for maior ou igual  do que o tamanho
                                             % dos shingles, então recomenda-se uma correção de produto
-                    closest_products = procurar_prod_mais_prox(produto, ks, nhf, R, p, MA_produtos, caracteristicas);
+                    closest_products = minHash_procurar_prod_mais_prox(produto, ks, nhf, R, p, MA_produtos, caracteristicas);
                     i = 1;
-                    while verificarBF(char(closest_products(i)), BF, k)
+                    while BF_verificar(char(closest_products(i)), BF, k_bloom)
                         i = i+1; %ignora os produtos que já estão no carrinho;
                     end
                     closest_product = char(closest_products(i));
@@ -118,16 +118,16 @@ while itens_carrinho ~= 50
                         opt2 = str2double(opt2);
                         switch opt2
                             case 1
-                                [carrinho, itens_carrinho, BF] = adicionar_ao_carrinho(closest_product, BF, k, carrinho, itens_carrinho);
+                                [carrinho, itens_carrinho, BF] = adicionar_ao_carrinho(closest_product, BF, k_bloom, carrinho, itens_carrinho);
                         end
                         break;
                     end
                 end
-            elseif verificarBF(produto, BF, k)
+            elseif BF_verificar(produto, BF, k_bloom)
                 fprintf("<strong>Produto já adicionado!</strong>\n");
 
             else
-                [carrinho, itens_carrinho, BF] = adicionar_ao_carrinho(produto, BF, k, carrinho, itens_carrinho);
+                [carrinho, itens_carrinho, BF] = adicionar_ao_carrinho(produto, BF, k_bloom, carrinho, itens_carrinho);
             end
             
         case 2  % Termina a execução do programa

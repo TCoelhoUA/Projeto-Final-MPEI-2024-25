@@ -1,5 +1,5 @@
-function [classes_produtos, product_prob, freq] = calculo_prob_caract(produtos, classes, caracteristicas,h)
-    % <strong>USAGE: calculo_prob_caract</strong>
+function [classes_produtos, product_prob, freq] = bayes_calculo_prob_caract(produtos, classes, caracteristicas,h)
+    % <strong>USAGE: bayes_calculo_prob_caract</strong>
     % Associa uma classe a cada produto com base em compras individuais de cada produto no passado
     %
     % <strong>Input:</strong>

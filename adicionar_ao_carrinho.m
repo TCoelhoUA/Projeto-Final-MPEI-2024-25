@@ -14,7 +14,7 @@ function [carrinho, itens_carrinho, BF] = adicionar_ao_carrinho(produto, BF, k, 
     % <strong>itens_carrinho</strong> - Número de itens no carrinho
     % <strong>BF</strong> - Bloom Filter atualizado
 
-    BF = adicionarBF(produto, BF, k);
+    BF = BF_adicionar(produto, BF, k);
     itens_carrinho = itens_carrinho+1;
     carrinho{itens_carrinho, 1} = produto;
 end
