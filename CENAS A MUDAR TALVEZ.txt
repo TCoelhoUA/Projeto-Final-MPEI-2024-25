@@ -8,4 +8,4 @@ Adicionar uma cena a dizer os produtos mais populares (com a variavel freq)
 
 Colocar uma waitbar entre a adição de cada item
 
-Ver o que fazer com a matris Treino (demora muito a ser construida e não é utilizada em nenhum lado)
+Ver o que fazer com a matriz Treino (demora muito a ser construida e não é utilizada em nenhum lado)
