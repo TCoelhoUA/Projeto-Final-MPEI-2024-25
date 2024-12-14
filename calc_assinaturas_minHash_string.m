@@ -1,6 +1,15 @@
 function assinaturas = calc_assinaturas_minHash_string(shingles,nhf, R, p)
-%UNTITLED3 Summary of this function goes here
-%   Detailed explanation goes here
+    % <strong>USAGE: calc_assinaturas_minHash_string</strong>
+    % EXPLICAÇÃO AQUI
+    %
+    % <strong>Input:</strong>
+    % <strong>shingles</strong> - EXPLICAÇÃO AQUI
+    % <strong>nhf</strong> - Número de funções de hash
+    % <strong>R</strong> - EXPLICAÇÃO AQUI
+    % <strong>p</strong> - Número primo
+    %
+    % <strong>Output:</strong>
+    % <strong>assinaturas</strong> - Assinaturas de cada produto
     
     assinaturas = zeros(nhf, 1); % linha = hash function
     

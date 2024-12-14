@@ -6,7 +6,7 @@ function shingles = create_shingles_string(string,ks)
     Title = string;
 
     if (ks > length(Title))
-        fprintf("ERROR: The shingle size is to big for the title %s\n", Title);
+        fprintf("ERRO: The shingle size is to big for the title %s\n", Title);
         return
     end
         

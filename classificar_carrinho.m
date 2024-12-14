@@ -1,6 +1,14 @@
 function classe_carrinho = classificar_carrinho(carrinho, caracteristicas, product_prob)
-    % Esta função classifica o carrinho como 'SEMANA' ou 'FIM DE SEMANA'
-    % com base nos produtos que contém e as suas respetivas probabilidades
+    % <strong>USAGE: classificar_carrinho</strong>
+    % Classifica o carrinho como "SEMANA" ou "FIM DE SEMANA" com base nos produtos que contém e as suas respetivas probabilidades
+    %
+    % <strong>Input:</strong>
+    % <strong>carrinho</strong> - Carrinho atual do utilizador
+    % <strong>caracteristicas</strong> - Todos os tipos únicos de produtos do dataset
+    % <strong>product_prob</strong> - Matriz com 2 colunas: P(Característica|"SEMANA") e P(Característica|"FIM DE SEMANA")
+    %
+    % <strong>Output:</strong>
+    % <strong>classe_carrinho</strong> - Classe do carrinho
 
     probSEM = 1;
     probFIMSEM = 1;

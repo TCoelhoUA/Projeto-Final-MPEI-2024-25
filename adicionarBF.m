@@ -1,13 +1,14 @@
 function BF = adicionarBF(elemento, BF, k)
-    % Adicionar 'elemento' a 'BF' usando 'k' funções de hash
+    % <strong>USAGE: adicionarBF</strong>
+    % Adiciona um elemento a um Bloom Filter usando k funções de hash
     %
-    % Parâmetros:
-    % elemento - elemento a adicionar
-    % BF - Bloom Filter
-    % k - Número de funções de hash
+    % <strong>Parâmetros:</strong>
+    % <strong>elemento</strong> - Elemento a adicionar
+    % <strong>BF</strong> - Bloom Filter
+    % <strong>k</strong> - Número de funções de hash
     %
-    % Output:
-    % BF (atualizado)
+    % <strong>Output:</strong>
+    % <strong>BF</strong> - Bloom Filter atualizado
 
     chave = elemento;
     % Repetir k vezes

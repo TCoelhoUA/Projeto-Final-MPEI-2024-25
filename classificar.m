@@ -1,6 +1,15 @@
 function classes_carrinhos = classificar(carrinhos, caracteristicas, product_prob, h)
-    % Esta função classifica os carrinhos como 'SEMANA' ou 'FIM DE SEMANA'
-    % com base nos produtos que contém e as suas respetivas probabilidades
+    % <strong>USAGE: classificar</strong>
+    % Classifica os carrinhos como "SEMANA" ou "FIM DE SEMANA" com base nos produtos que contêm e as suas respetivas probabilidades
+    %
+    % <strong>Input:</strong>
+    % <strong>carrinhos</strong> - Todos os carrinhos do dataset
+    % <strong>caracteristicas</strong> - Todos os tipos únicos de produtos do dataset
+    % <strong>product_prob</strong> - Matriz com 2 colunas: P(Característica|"SEMANA") e P(Característica|"FIM DE SEMANA")
+    % <strong>h</strong> - Waitbar associada
+    %
+    % <strong>Output:</strong>
+    % <strong>classes_carrinhos</strong> - Classes dos carrinhos
 
     classes_carrinhos = categorical();
     for carrinho=2:length(carrinhos)
@@ -16,7 +25,6 @@ function classes_carrinhos = classificar(carrinhos, caracteristicas, product_pro
                     probFIMSEM = probFIMSEM*product_prob(car, 2);
                 end
             end
-            %fprintf("PRODUTO: %s\nSEMANA: %f\nFIM DE SEMANA: %f\n\n\n", caracteristicas{car}, probSEM, probFIMSEM); for debuging
         end
         if probSEM > probFIMSEM
             classes_carrinhos(carrinho-1, 1) = "SEMANA";

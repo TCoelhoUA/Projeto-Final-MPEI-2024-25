@@ -1,14 +1,17 @@
-function recomendacoes = atualizar_recomendacoes(recomendacoes, carrinho, BF, k, caracteristicas, product_prob, freq)
-    % Esta função atualiza as recomendações com base nos produtos
-    % que estão atualmente no carrinho
+function recomendacoes = atualizar_recomendacoes(carrinho, BF, k, caracteristicas, product_prob, freq)
+    % <strong>USAGE: atualizar_recomendacoes</strong>
+    % Atualiza as recomendações com base nos produtos que estão atualmente no carrinho
     %
-    % Input:
-    % carrinho - cell array com os produtos adicionados
-    % probsSEM - probabilidades de cada produto ser comprado durante a semana
-    % probsFIMSEM - probabilidades de cada produto ser comprado durante o fim de semana
+    % <strong>Input:</strong>
+    % <strong>carrinho</strong> - Carrinho atual do utilizador
+    % <strong>BF</strong> - Bloom Filter
+    % <strong>k</strong> - Número de funções de hash
+    % <strong>caracteristicas</strong> - Todos os tipos únicos de produtos do dataset
+    % <strong>product_prob</strong> - Matriz com 2 colunas: P(Característica|"SEMANA") e P(Característica|"FIM DE SEMANA")
+    % <strong>freq</strong> - Número de vezes que cada produto foi vendido
     %
-    % Output:
-    % recomendacoes - recomendações atualizadas
+    % <strong>Output:</strong>
+    % <strong>recomendacoes</strong> - 10 produtos mais adequados a serem recomendados
 
     classe_carrinho = classificar_carrinho(carrinho, caracteristicas, product_prob);
 

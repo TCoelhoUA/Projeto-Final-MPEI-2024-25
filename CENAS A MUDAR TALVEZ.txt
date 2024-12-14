@@ -1,0 +1,12 @@
+Completar a descrição de 'calc_assinaturas_minHash_string' e ver onde usamos essa função
+
+Apagar 'calcProbCaract_v2'
+
+Completar a descrição de 'calcular_assinaturas'
+
+Fazer a descrição de 'calcular_similaridades' e ver onde usamos essa função (está escrita meio em inglês)
+
+Apagar 'classificar' (está comentada no código, não chegamos a usar)
+
+Fazer a descrição de 'create_shingles_string'
+Ver a diferença entre 'create_shingles_string' e 'gerar_shingles' (talvez apagar 'create_shingles_string' ou ver onde ela é usada)

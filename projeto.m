@@ -24,7 +24,7 @@ classes(classes_numericas >= 5 & classes_numericas <= 6) = {'FIM DE SEMANA'};
 classes = categorical(classes);
 
 % Associa cada produto a uma classe
-[classes_produto, product_prob, freq] = calcProbCaract(produtos, classes, caracteristicas, h);
+[classes_produto, product_prob, freq] = calculo_prob_caract(produtos, classes, caracteristicas, h);
 
 
 classes_produto_cell = cellstr(classes_produto);
@@ -90,7 +90,7 @@ while itens_carrinho ~= 50
     opt = str2double(opt);
     switch opt
         case 1  % Processo de adicionar item ao carrinho (e atualização das recomendações)
-            recomendacoes = atualizar_recomendacoes(recomendacoes, carrinho, BF, k, caracteristicas, product_prob, freq);
+            recomendacoes = atualizar_recomendacoes(carrinho, BF, k, caracteristicas, product_prob, freq);
             carrinhos_similares = atualizar_carrinhos_similares(carrinho, carrinhos);
             mostrar(recomendacoes, carrinho, carrinhos_similares, itens_carrinho);
             produto = input("<strong>Produto -> </strong>", "s");
