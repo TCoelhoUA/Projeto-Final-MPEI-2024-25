@@ -13,7 +13,7 @@ function recomendacoes = atualizar_recomendacoes(carrinho, BF, k, caracteristica
     % <strong>Output:</strong>
     % <strong>recomendacoes</strong> - 10 produtos mais adequados a serem recomendados
 
-    classe_carrinho = classificar_carrinho(carrinho, caracteristicas, product_prob);
+    classe_carrinho = bayes_classificar_carrinho(carrinho, caracteristicas, product_prob);
 
     % Falta fazer a verificação do item do carrinho no BF (não se deve recomendar items que já estão no carrinho)
     if strcmp(classe_carrinho, "SEMANA")
