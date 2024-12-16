@@ -1,20 +1,20 @@
 %% Leitura  e interpretação dos datasets
 h = waitbar(0, 'A ler os produtos...', 'Name', 'A processar dados (Por favor espere)');
-dados_produtos = readcell("produtos.csv");  % dataset simplificado (para demonstração)
+dados_produtos = readcell("produtos_simplified.csv");  % dataset simplificado (para demonstração)
 %dados_produtos = readcell("produtos.csv");  % dataset original (para uso final)
 
 waitbar(1/6, h, 'A ler os carrinhos...');
-carrinhos = readcell("carrinhos.csv");  % dataset simplificado (para demonstração)
+carrinhos = readcell("carrinhos_simplified.csv");  % dataset simplificado (para demonstração)
 %carrinhos = readcell("carrinhos.csv");  % dataset original (para uso final)
 
-% Parse dos dados
+%% Parse dos dados
 waitbar(2/6, h, 'A atribuir classes aos produtos...');
 produtos = dados_produtos(2:end, 3);               % Vetor com os vários produtos comprados (separadamente)
 caracteristicas = unique(produtos);                % Vetor com os tipos distintos de produtos
 
 classes_numericas = cell2mat(dados_produtos(2:end,7));    % Vetor com as classes associadas a cada compra de produto individual
 
-% Atribuição das classes 'SEMANA' e 'FIM DE SEMANA'
+%% Atribuição das classes 'SEMANA' e 'FIM DE SEMANA'
 % Semana - Segunda a Sexta (0:4)
 % Fim de semana - Sábado e Domingo (5:6)
 
@@ -44,7 +44,7 @@ prob_sem = sum(classes == 'SEMANA')/length(classes);     % P('SEMANA')
 prob_fimsem = sum(classes == 'FIM DE SEMANA')/length(classes);     % P('FIM DE SEMANA')
 fprintf("\nProbabilidades de cada classe:\nP('SEMANA') = %.4f\nP('FIM SEMANA') = %.4f\n", prob_sem, prob_fimsem);
 
-% Gerar shingles e assinaturas
+%% Gerar shingles e assinaturas
 
 % Shingles
 ks = 2; % 2-shingles
@@ -61,13 +61,8 @@ MA_produtos = minHash_calcular_assinaturas(shingles, nhf, R, p);
 
 %% Interface -Inicialização do Bloom Filter e input do utilizador
 % Inicializar Bloom Filter e agregados
-BF = BF_inicializar(5000);   % 5000 é só um valor aleatório (possivelmente a alterar depois)
+BF = BF_inicializar(150);   % 5000 é só um valor aleatório (possivelmente a alterar depois)
 k_bloom = 3;  % numero de funcoes de hash
-% Adaptado de 'Symbolic Math Toolbox'
-%range = [1 999999];
-%p = nthprime(randi(range));
-% -------------------------
-
 
 % Pedir input ao utilizador
 clc;    % limpa o terminal
@@ -93,7 +88,7 @@ while itens_carrinho < car_size
     opt = str2double(opt);
     switch opt
         case 1  % Processo de adicionar item ao carrinho (e atualização das recomendações)
-            recomendacoes = atualizar_recomendacoes(carrinho, BF, k_bloom, caracteristicas, product_prob, freq);
+            recomendacoes = atualizar_recomendacoes(carrinho, BF, k_bloom, caracteristicas, product_prob, prob_sem, prob_fimsem, freq);
             carrinhos_similares = atualizar_carrinhos_similares(carrinho, carrinhos, car_size);
             mostrar(recomendacoes, carrinho, carrinhos_similares, itens_carrinho);
             produto = input("<strong>Produto -> </strong>", "s");
@@ -148,8 +143,8 @@ while itens_carrinho < car_size
     end
 end
 
-disp("<strong>O carrinho está cheio!</strong>\n")
-fprintf("Deseja guardar a sua lista de compras?\n\n<strong>1</strong> - Sim\n<strong>2</strong> - Não\n\n");
+fprintf("<strong>O carrinho está cheio!</strong>\n")
+fprintf("\nDeseja guardar a sua lista de compras?\n\n<strong>1</strong> - Sim\n<strong>2</strong> - Não\n\n");
 opt = input("<strong>Opção -> </strong>", "s");
 clc;    % limpa o terminal
 
@@ -160,37 +155,29 @@ end
 disp("<strong>Exiting...</strong>");
 return
 
-%% TESTE 1 - Dá print dos produtos e quando se vendem mais (semana ou fim de semana, proporcional ao dias: 5 e 2)
-%produtos = categorical(dados_produtos(2:end, 3));
-for i=1:length(caracteristicas)
-    sem = 0;
-    fimsem = 0;
-    for n=1:length(produtos)
-        if ismember(produtos{n, 1}, caracteristicas(i, 1))
-            if classes(n, 1) == 'SEMANA'
-                sem = sem+1/5;
-            else
-                fimsem = fimsem+1/2;
-            end
-        end
-    end
-    if sem > fimsem
-        fprintf("%s é mais SEMANA (%d | %d)\n", caracteristicas{i, 1});
-    else
-        fprintf("%s é mais FIM DE SEMANA (%d | %d)\n", caracteristicas{i, 1});
-    end
-end
+%% Testes aos módulos
+%% Classificador Naïve Bayes
+%% Filtro de Bloom
+%R = randi(152, 1000, 11);
 
-%% Teste 2
-fprintf("%d - %d", probsSEM(2), probsFIMSEM(2));
-c=0;
-for i=1:length(probsSEM)
-    if ((probsSEM(i) == 0 && probsFIMSEM(i) ~= 0) || (probsSEM(i) ~= 0 && probsFIMSEM(i) == 0))
-        fprintf("%d\n", i);
-        c=c+1;
+%carrinho1 = cell(1, 11);
+%carrinho2 = cell(1, 11);
+
+k_bloom = 3;
+
+RESULTADOS = zeros(1000, 1);
+% 1000 carrinhos, cada um com 11 items
+for carrinho = 1:1000
+    BF = BF_inicializar(150);
+
+    carrinho_idx = randperm(152, 11);   % escolha aleatória de itens
+
+    for product = 1:11
+        BF = BF_adicionar(cell2mat(caracteristicas(carrinho_idx(product))), BF, k_bloom);
+    end
+    if (sum(BF) ~= 11*k_bloom)
+        RESULTADOS(carrinho) = 1;
     end
 end
 
-%% Teste 3
-
-
+%% MinHash

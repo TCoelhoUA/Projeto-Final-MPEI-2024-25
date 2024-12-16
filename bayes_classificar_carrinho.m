@@ -1,4 +1,4 @@
-function classe_carrinho = bayes_classificar_carrinho(carrinho, caracteristicas, product_prob)
+function classe_carrinho = bayes_classificar_carrinho(carrinho, caracteristicas, product_prob, prob_sem, prob_fimsem)
     % <strong>USAGE: bayes_classificar_carrinho</strong>
     % Classifica o carrinho como "SEMANA" ou "FIM DE SEMANA" com base nos produtos que contém e as suas respetivas probabilidades
     %
@@ -10,8 +10,8 @@ function classe_carrinho = bayes_classificar_carrinho(carrinho, caracteristicas,
     % <strong>Output:</strong>
     % <strong>classe_carrinho</strong> - Classe do carrinho
 
-    probSEM = 1;
-    probFIMSEM = 1;
+    probSEM = prob_sem;
+    probFIMSEM = prob_fimsem;
     classe_carrinho = "N/A";
     for p = 1:length(carrinho)
         if ismissing(carrinho{p}) 
@@ -28,13 +28,13 @@ function classe_carrinho = bayes_classificar_carrinho(carrinho, caracteristicas,
                 end
             end
         end
+    end
 
-        if probSEM > probFIMSEM
-            classe_carrinho = "SEMANA";
-        elseif probSEM < probFIMSEM
-            classe_carrinho = "FIM DE SEMANA";
-        else
-            classe_carrinho = "N/A";
-        end
+    if probSEM > probFIMSEM
+        classe_carrinho = "SEMANA";
+    elseif probSEM < probFIMSEM
+        classe_carrinho = "FIM DE SEMANA";
+    else
+        classe_carrinho = "N/A";
     end
 end
