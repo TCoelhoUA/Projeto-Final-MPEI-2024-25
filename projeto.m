@@ -7,43 +7,52 @@ waitbar(1/6, h, 'A ler os carrinhos...');
 carrinhos = readcell("carrinhos_simplified.csv");  % dataset simplificado (para demonstração)
 %carrinhos = readcell("carrinhos.csv");  % dataset original (para uso final)
 
-%% Parse dos dados
+%% Parse dos dados e atribuição das classes 'SEMANA' e 'FIM DE SEMANA'
 waitbar(2/6, h, 'A atribuir classes aos produtos...');
-produtos = dados_produtos(2:end, 3);               % Vetor com os vários produtos comprados (separadamente)
+produtos = string(dados_produtos(2:end, 3));
+produtos_e_datas = string(dados_produtos(2:end, 2:3));               % Vetor com os vários produtos comprados e as datas (separadamente)
 caracteristicas = unique(produtos);                % Vetor com os tipos distintos de produtos
 
-classes_numericas = cell2mat(dados_produtos(2:end,7));    % Vetor com as classes associadas a cada compra de produto individual
+carrinhos = criar_carrinhos(produtos_e_datas, h)
 
-%% Atribuição das classes 'SEMANA' e 'FIM DE SEMANA'
-% Semana - Segunda a Sexta (0:4)
-% Fim de semana - Sábado e Domingo (5:6)
-
-classes = cell(size(classes_numericas)); % Cria uma célula do mesmo tamanho de 'classes_numericas'
-classes(classes_numericas >= 0 & classes_numericas <= 4) = {'SEMANA'};
-classes(classes_numericas >= 5 & classes_numericas <= 6) = {'FIM DE SEMANA'};
-classes = categorical(classes);
-
-% Associa cada produto a uma classe
-[classes_produto, product_prob, freq] = bayes_calculo_prob_caract(produtos, classes, caracteristicas, h);
-
-
-classes_produto_cell = cellstr(classes_produto);
-
-% Cria uma matriz com os produtos, as suas classes respetivas, as suas
-% probabilidades e as suas frequências
-product_class_probs_matrix = [caracteristicas(:), classes_produto_cell(:), num2cell(product_prob), num2cell(freq)];
-
-% Criação da matriz Treino (talvez não seja preciso, pois as nossas
-% P(car_i|classe) já é retirada automaticamente pelas caracteristicas
-Treino = treino(carrinhos, caracteristicas, h);
-%Classes_carrinho = bayes_classificar(carrinhos, caracteristicas, product_prob2, h);
-delete(h)
-
+%% Cálculo das probabilidades de cada classe
 % Probabilidades das classes: "SEMANA" e "FIM DE SEMANA"
-prob_sem = sum(classes == 'SEMANA')/length(classes);     % P('SEMANA')
-prob_fimsem = sum(classes == 'FIM DE SEMANA')/length(classes);     % P('FIM DE SEMANA')
+prob_sem = 0;
+prob_fimsem = 0;
+for car = 1:numel(carrinhos)
+    if strcmp(carrinhos{car}{1}, 'SEMANA')
+        prob_sem = prob_sem + 1;
+    else
+        prob_fimsem = prob_fimsem + 1;
+    end
+end
+prob_sem = prob_sem/numel(carrinhos);
+prob_fimsem = prob_fimsem/numel(carrinhos);
 fprintf("\nProbabilidades de cada classe:\nP('SEMANA') = %.4f\nP('FIM SEMANA') = %.4f\n", prob_sem, prob_fimsem);
 
+%% Cálculo das probabilidades de cada característica sabendo a classe
+% P(característica|classe)
+probsSEM = zeros(numel(caracteristicas), 1);
+probsFIMSEM = zeros(numel(caracteristicas), 1);
+freq = zeros(numel(caracteristicas), 1);
+
+for produto = 1:numel(caracteristicas)
+    for car = 1:numel(carrinhos)
+        classe = carrinhos{car}{1};
+        if any(ismember(carrinhos{car}, caracteristicas(produto)))
+            freq(produto) = freq(produto) + 1;
+            if strcmp(classe, "SEMANA")
+                probsSEM(produto) = probsSEM(produto) + 1;
+            else
+                probsFIMSEM(produto) = probsFIMSEM(produto) + 1;
+            end
+        end
+    end
+end
+
+probsSEM = probsSEM./freq;
+probsFIMSEM = probsFIMSEM./freq;
+product_prob = [probsSEM probsFIMSEM];
 %% Gerar shingles e assinaturas
 
 % Shingles
@@ -59,6 +68,7 @@ end
 R = randi(p, nhf, ks);
 MA_produtos = minHash_calcular_assinaturas(shingles, nhf, R, p);
 
+
 %% Interface -Inicialização do Bloom Filter e input do utilizador
 % Inicializar Bloom Filter e agregados
 BF = BF_inicializar(150);   % 5000 é só um valor aleatório (possivelmente a alterar depois)
@@ -67,15 +77,14 @@ k_bloom = 3;  % numero de funcoes de hash
 % Pedir input ao utilizador
 clc;    % limpa o terminal
 itens_carrinho = 0;
-car_size = 11;
-carrinho = cell(car_size, 1);
+carrinho = cell(999, 1);    % agora há carrinhos maiores do que 11, talvez coloquemos limite de 30?
 carrinho(:) = {''};
 recomendacoes = cell(10, 1);    % possivelmente inicializar como um cell array dos produtos mais comprados
                                 % sem interessar a classe, apenas como recomendação inicial ou quando
                                 % classe = "N/A"
 
-while itens_carrinho < car_size
-    fprintf("Itens: %d/%d\n\n<strong>1</strong> - Adicionar Item\n<strong>2</strong> - Sair\n\n", itens_carrinho, car_size);
+while itens_carrinho < numel(carrinho)
+    fprintf("Itens: %d/%d\n\n<strong>1</strong> - Adicionar Item\n<strong>2</strong> - Sair\n\n", itens_carrinho, numel(carrinho));
     opt = input("<strong>Opção -> </strong>", "s");
     clc;    % limpa o terminal
 
@@ -89,8 +98,9 @@ while itens_carrinho < car_size
     switch opt
         case 1  % Processo de adicionar item ao carrinho (e atualização das recomendações)
             recomendacoes = atualizar_recomendacoes(carrinho, BF, k_bloom, caracteristicas, product_prob, prob_sem, prob_fimsem, freq);
-            carrinhos_similares = atualizar_carrinhos_similares(carrinho, carrinhos, car_size);
-            mostrar(recomendacoes, carrinho, carrinhos_similares, itens_carrinho);
+            carrinhos_similares = atualizar_carrinhos_similares(carrinho, carrinhos);
+            itens_similares = unique(carrinhos_similares);
+            mostrar(recomendacoes, carrinho, itens_similares, itens_carrinho);
             produto = input("<strong>Produto -> </strong>", "s");
             clc;    % limpa o terminal
 

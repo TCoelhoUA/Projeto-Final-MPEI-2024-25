@@ -1,24 +1,18 @@
-function mostrar(recomendacoes, carrinho, carrinhos_similares, itens_carrinho)
+function mostrar(recomendacoes, carrinho, itens_similares, itens_carrinho)
     fprintf("<strong>Recomendações:</strong>\n");
     for r = 1:length(recomendacoes)
         fprintf("• %s\n", recomendacoes{r}{1});
     end
-    
-    %{  
-    Recomendações por MinHash
-    Supostamente quando o programa corre 'carrinhos_similares' fica um 5x4
-    cell mas eu iniciei-o como um 5x11 nao percebo o porque de ficar 5x4
-    entao desativei temporariamente este print
 
-    fprintf("<strong>\nOutros utilizadores também compraram:</strong>\n");
-    for cs = 1:length(carrinhos_similares)
-        p = 1;
-        while ~missing(carrinhos_similares{cs, p})
-            fprintf("• %s\n", carrinhos_similares{cs, p});
-            p = p+1;
-        end
+    max_idx = 10;
+    if length(itens_similares) < 10
+        max_idx = length(itens_similares);
     end
-    %}
+    fprintf("\n<strong>Outros utilizadores também compraram:</strong>\n");
+    for i = 1:max_idx
+        fprintf("• %s\n", itens_similares(i));
+    end
+    
 
     fprintf("\n<strong>Carrinho:</strong>\n");
     p = 1;
