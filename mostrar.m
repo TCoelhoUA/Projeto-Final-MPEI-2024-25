@@ -8,7 +8,7 @@ function mostrar(recomendacoes, carrinho, itens_similares, BF, k_bloom, itens_ca
     % Recomendações (MinHash)
     c = 1;
     item = 1;
-    fprintf("\n<strong>Outros utilizadores também compraram:</strong>\n");
+    fprintf("\n<strong>Utilizadores como tu também compraram:</strong>\n");
     while c ~= 11 && item ~= length(itens_similares)
         if ~BF_verificar(char(itens_similares(item)), BF, k_bloom)
             fprintf("• %s\n", itens_similares(item));

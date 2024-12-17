@@ -19,7 +19,7 @@ function BF = BF_adicionar(elemento, BF, k)
     
         % 2 - Garantir que o index está no intervalo de 1 a n
         index = mod(index, length(BF)) + 1;
-
+        
         % 3 - Atualizar o valor para 1 na posição index
         BF(index) = 1;
     end

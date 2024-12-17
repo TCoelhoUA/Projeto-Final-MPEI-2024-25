@@ -1,4 +1,4 @@
-function [MA, h] = minHash_calcular_assinaturas(shingles, nhf, R, p, h)
+function MA = minHash_calcular_assinaturas(shingles, nhf, R, p)
     % <strong>USAGE: minHash_calcular_assinaturas(shingles, nhf, R, p)</strong>
     % Calcula a matriz assinatura
     %
@@ -28,6 +28,5 @@ function [MA, h] = minHash_calcular_assinaturas(shingles, nhf, R, p, h)
 
             MA(hf, conjunto_i) = minHash;
         end
-        waitbar(5/6 + 1/6*hf/nhf, h, 'A calcular a matriz assinatura...');
     end
 end
