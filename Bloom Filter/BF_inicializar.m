@@ -1,11 +1,12 @@
 function BF = BF_inicializar(n)
+    % <strong>USAGE: BF_inicializar(n)</strong>
     % Inicializa o bit-array do Bloom Filter com zeros.
     %
-    % Parâmetros:
-    % n - tamanho do BF
+    % <strong>Input</strong>:
+    % <strong>n</strong> - tamanho do BF
     %
-    % Output:
-    % BF - bit array
+    % <strong>Output:</strong>
+    % <strong>BF</strong> - bit array
 
     BF = zeros(1, n, 'uint8');      % uint8 - Se omitissemos, seria um array de 'doubles' e não de 'bits'
 end

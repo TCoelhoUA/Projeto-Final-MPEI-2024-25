@@ -1,4 +1,10 @@
 function guardar_ficheiro(carrinho)
+    % <strong>USAGE: guardar_ficheiro(carrinho)</strong>
+    % Guarda o carrinho num ficheiro
+    %
+    % <strong>Input:</strong>
+    % <strong>carrinho</strong> - carrinho atual
+
     file_obj = fopen("lista_compras.txt", "w");
     
     fprintf(file_obj, "Lista de compras:\n");

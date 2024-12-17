@@ -1,4 +1,13 @@
 function distancias = distJ(carrinho, carrinhos)
+    %<strong>USAGE:distJ(carrinho, carrinhos)</strong>
+    %Calcula a distância de Jaccard de um conjunto de carrinhos a um carrinho específico
+    %
+    % <strong>Input:</strong>
+    % <strong>carrinho</strong> - carrinho atual
+    % <strong>carrinhos</strong> - todos os carrinhos
+    %
+    % <strong>Output:</strong>
+    % <strong>distancias</string> - distâncias entre os carrinhos
     %distancias = zeros(length(carrinhos)-1, 1);   % vetor com distâncias de jaccard
     distancias = [];
     

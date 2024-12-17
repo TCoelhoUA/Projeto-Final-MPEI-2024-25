@@ -1,5 +1,5 @@
 function [carrinho, itens_carrinho, BF] = adicionar_ao_carrinho(produto, BF, k, carrinho, itens_carrinho)
-    % <strong>USAGE: adicionar_ao_carrinho</strong>
+    % <strong>USAGE: adicionar_ao_carrinho(produto, BF, k, carrinho, itens_carrinho)</strong>
     % Adiciona um produto a um carrinho através de um Bloom Filter.
     %
     % <strong>Input:</strong>

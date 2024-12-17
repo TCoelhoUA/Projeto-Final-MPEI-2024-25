@@ -1,4 +1,16 @@
 function mostrar(recomendacoes, carrinho, itens_similares, BF, k_bloom, itens_carrinho)
+    % <strong>USAGE: mostrar(recomendacoes, carrinho, itens_similares, BF, k_bloom, itens_carrinho)</strong>
+    % Mosta as recomendações por Naïve Bayes e Distância de Jaccard e o
+    % carrinho atual
+    %
+    % <strong>Input:</strong>
+    % <strong>recomendacoes</strong> - Produtos recomendados por Naïve Bayes
+    % <strong>carrinho</strong> - Carrinho atual
+    % <strong>itens_similares</strong> - Itens recomendados por distância de Jaccard
+    % <strong>BF</strong> - Bloom Filter
+    % <strong>k_bloom</strong> - Número de hash functions do bloom filter
+    % <strong>itens_carrinho</strong> - Número de itens no carrinho
+
     % Recomendações (Naïve Bayes)
     fprintf("<strong>Recomendações:</strong>\n");
     for r = 1:length(recomendacoes)

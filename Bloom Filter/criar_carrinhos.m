@@ -1,5 +1,13 @@
 function carrinhos = criar_carrinhos(produtos_e_datas)
-    % Extract unique dates
+    % <strong>USAGE: minHash_calcular_assinaturas(shingles, nhf, R, p)</strong>
+    % Calcula a matriz assinatura
+    %
+    % <strong>Input:</strong>
+    % <strong>produtos_e_datas</strong> - Matriz com a data de compra e o nome de cada produto
+    %
+    % <strong>Output:</strong>
+    % <strong>carrinhos</strong> - carrinhos
+    
     num_datas = unique(produtos_e_datas(:, 1));
     num_carrinhos = numel(num_datas);
     

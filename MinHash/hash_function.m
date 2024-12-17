@@ -1,6 +1,15 @@
 function hc = hash_function(elemento, k, R, p)
-    % USAGE:
-    % hc = hash_function("Toy", 3, randi(127, 100, 3), 127);
+    % <strong>USAGE: hash_function(elemento, k, R, p)</strong>
+    % Devolve um hashcode de um elemento
+    %
+    % <strong>Input:</strong>
+    % <strong>elemento</strong> - elemento atual
+    % <strong>k</strong> - Hash Funtion atual
+    % <strong>R</strong> - Matriz aleatória 
+    % <strong>p</strong> - Número primo
+    %
+    % <strong>Output:</strong>
+    % <strong>hc</strong> - Hashcode
     
     codigos_ASCII = double(elemento);   % vetor com código ASCII
     r = R(k,:);

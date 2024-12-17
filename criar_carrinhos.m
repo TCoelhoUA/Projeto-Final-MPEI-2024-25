@@ -3,12 +3,12 @@ function [carrinhos, h] = criar_carrinhos(produtos_e_datas, h)
     % Calcula a matriz assinatura
     %
     % <strong>Input:</strong>
-    % <strong>produtos_e_datas</strong> -  Matriz com a data de compra e o nome de cada produto
-    % <strong>h</strong>        -  waitbar atual
+    % <strong>produtos_e_datas</strong> - Matriz com a data de compra e o nome de cada produto
+    % <strong>h</strong> - waitbar atual
     %
     % <strong>Output:</strong>
-    % <strong>carrinhos</strong>- carrinhos
-    % <strong>h</strong>        -  waitbar atualizada
+    % <strong>carrinhos</strong> - carrinhos
+    % <strong>h</strong> - waitbar atualizada
 
     num_datas = unique(produtos_e_datas(:, 1)); % Número de datas diferentes (1 data equivale a 1 carrinho)
     num_carrinhos = numel(num_datas);

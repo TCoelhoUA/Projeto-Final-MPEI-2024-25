@@ -1,13 +1,14 @@
 function res = BF_verificar(elemento, BF, k)
+    % USAGE: BF_verificar(elemento, BF, k)
     % Verifica a pertença de um elemento no Bloom Filter
     %
-    % Parâmetros:
-    % elemento - elemento a verificar
-    % BF - Bloom Filter
-    % k - Número de funções de hash
+    % <strong>Input</strong>:
+    % <strong>elemento</strong> - elemento a verificar
+    % <strong>BF</strong> - Bloom Filter
+    % <strong>k</strong> - Número de funções de hash
     %
-    % Output:
-    % res - booleano
+    % <strong>Output:</strong>
+    % <strong>res</strong> - booleano
 
     chave = elemento;
     res = 1;

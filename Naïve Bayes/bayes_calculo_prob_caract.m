@@ -3,12 +3,12 @@ function [product_prob, freq] = bayes_calculo_prob_caract(carrinhos, caracterist
     % Associa uma classe a cada produto com base em compras individuais de cada produto no passado
     %
     % <strong>Input:</strong>
-    % <strong>carrinhos</strong>        - Cell array de carrinhos
-    % <strong>caracteristicas</strong>  - Todos os tipos únicos de produtos do dataset
+    % <strong>carrinhos</strong> - Cell array de carrinhos
+    % <strong>caracteristicas</strong> - Todos os tipos únicos de produtos do dataset
     %
     % <strong>Output:</strong>
-    % <strong>product_prob</strong>     - Matriz com 2 colunas: P(Característica|"SEMANA") e P(Característica|"FIM DE SEMANA")
-    % <strong>freq</strong>             - Número de vezes que cada produto foi vendido
+    % <strong>product_prob</strong> - Matriz com 2 colunas: P(Característica|"SEMANA") e P(Característica|"FIM DE SEMANA")
+    % <strong>freq</strong> - Número de vezes que cada produto foi vendido
 
     probsSEM = zeros(numel(caracteristicas), 1);
     probsFIMSEM = zeros(numel(caracteristicas), 1);
