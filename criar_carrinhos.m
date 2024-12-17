@@ -1,4 +1,4 @@
-function carrinhos = criar_carrinhos(produtos_e_datas, h)
+function [carrinhos, h] = criar_carrinhos(produtos_e_datas, h)
     % Extract unique dates
     num_datas = unique(produtos_e_datas(:, 1));
     num_carrinhos = numel(num_datas);
@@ -30,6 +30,6 @@ function carrinhos = criar_carrinhos(produtos_e_datas, h)
 
         %carrinhos{carrinho_idx} = [classe, current_date, items'];
         carrinhos{carrinho_idx} = [classe, current_date, unique_items'];
-        waitbar(2/6+2/6*carrinho_idx/num_carrinhos, h, 'A atribuir classes aos carrinhos...')
+        waitbar(1/12+(3/12+2/6)*carrinho_idx/num_carrinhos, h, 'A atribuir classes aos carrinhos...')
     end
 end

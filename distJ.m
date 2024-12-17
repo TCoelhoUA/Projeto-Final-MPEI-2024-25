@@ -4,7 +4,7 @@ function distancias = distJ(carrinho, carrinhos)
     
     %carrinho_mat = {};
     carrinho_mat = [];
-    for item = 1:numel(carrinhos)
+    for item = 1:numel(carrinho)
         if ismissing(carrinho{item})
             break
         end
@@ -23,7 +23,8 @@ function distancias = distJ(carrinho, carrinhos)
         %disp(car)
         %disp(carrinho_mat)
         distJ = numel(intersect(car, carrinho_mat))/numel(union(car, carrinho_mat));
-        distancias(end+1, 1) = distJ;
+        %distancias(end+1, 1) = distJ;
+        distancias = [distancias; distJ];
     end
 end
 

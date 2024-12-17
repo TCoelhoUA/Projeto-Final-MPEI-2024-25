@@ -1,19 +1,28 @@
 %% Leitura  e interpretação dos datasets
-h = waitbar(0, 'A ler os produtos...', 'Name', 'A processar dados (Por favor espere)');
+%h = waitbar(0, 'A ler os produtos...', 'Name', 'A processar dados (Por favor espere)');
 dados_produtos = readcell("produtos_simplified.csv");  % dataset simplificado (para demonstração)
 %dados_produtos = readcell("produtos.csv");  % dataset original (para uso final)
+h = waitbar(1/12, 'A ler os produtos...', 'Name', 'A processar dados (Por favor espere)');
 
-waitbar(1/6, h, 'A ler os carrinhos...');
-carrinhos = readcell("carrinhos_simplified.csv");  % dataset simplificado (para demonstração)
+%waitbar(1/12, h, 'A ler os carrinhos...');
+%carrinhos = readcell("carrinhos_simplified.csv");  % dataset simplificado (para demonstração)
 %carrinhos = readcell("carrinhos.csv");  % dataset original (para uso final)
 
-%% Parse dos dados e atribuição das classes 'SEMANA' e 'FIM DE SEMANA'
-waitbar(2/6, h, 'A atribuir classes aos produtos...');
+%% Parse dos dados
+%waitbar(2/6, h, 'A atribuir classes aos produtos...');
 produtos = string(dados_produtos(2:end, 3));
 produtos_e_datas = string(dados_produtos(2:end, 2:3));               % Vetor com os vários produtos comprados e as datas (separadamente)
 caracteristicas = unique(produtos);                % Vetor com os tipos distintos de produtos
 
-carrinhos = criar_carrinhos(produtos_e_datas, h)
+[carrinhos, h] = criar_carrinhos(produtos_e_datas, h);
+
+% Permutação aleatória (90% treino, 10% teste)
+
+permutacao = randperm(length(carrinhos));
+idx_treino = round(90/100 * length(carrinhos));
+carrinhos_todos = carrinhos;
+carrinhos_teste = carrinhos(idx_treino+1:end);
+carrinhos = carrinhos(1:idx_treino);
 
 %% Cálculo das probabilidades de cada classe
 % Probabilidades das classes: "SEMANA" e "FIM DE SEMANA"
@@ -28,7 +37,7 @@ for car = 1:numel(carrinhos)
 end
 prob_sem = prob_sem/numel(carrinhos);
 prob_fimsem = prob_fimsem/numel(carrinhos);
-fprintf("\nProbabilidades de cada classe:\nP('SEMANA') = %.4f\nP('FIM SEMANA') = %.4f\n", prob_sem, prob_fimsem);
+%fprintf("\nProbabilidades de cada classe:\nP('SEMANA') = %.4f\nP('FIM SEMANA') = %.4f\n", prob_sem, prob_fimsem);
 
 %% Cálculo das probabilidades de cada característica sabendo a classe
 % P(característica|classe)
@@ -66,18 +75,18 @@ while ~isprime(p)
     p = p+2;
 end
 R = randi(p, nhf, ks);
-MA_produtos = minHash_calcular_assinaturas(shingles, nhf, R, p);
-
+[MA_produtos, h] = minHash_calcular_assinaturas(shingles, nhf, R, p, h);
+delete(h);
 
 %% Interface -Inicialização do Bloom Filter e input do utilizador
 % Inicializar Bloom Filter e agregados
-BF = BF_inicializar(150);   % 5000 é só um valor aleatório (possivelmente a alterar depois)
+BF = BF_inicializar(400);   % 5000 é só um valor aleatório (possivelmente a alterar depois)
 k_bloom = 3;  % numero de funcoes de hash
 
 % Pedir input ao utilizador
 clc;    % limpa o terminal
 itens_carrinho = 0;
-carrinho = cell(999, 1);    % agora há carrinhos maiores do que 11, talvez coloquemos limite de 30?
+carrinho = cell(25, 1);    % agora há carrinhos maiores do que 11, talvez coloquemos limite de 30?
 carrinho(:) = {''};
 recomendacoes = cell(10, 1);    % possivelmente inicializar como um cell array dos produtos mais comprados
                                 % sem interessar a classe, apenas como recomendação inicial ou quando
@@ -100,7 +109,7 @@ while itens_carrinho < numel(carrinho)
             recomendacoes = atualizar_recomendacoes(carrinho, BF, k_bloom, caracteristicas, product_prob, prob_sem, prob_fimsem, freq);
             carrinhos_similares = atualizar_carrinhos_similares(carrinho, carrinhos);
             itens_similares = unique(carrinhos_similares);
-            mostrar(recomendacoes, carrinho, itens_similares, itens_carrinho);
+            mostrar(recomendacoes, carrinho, itens_similares, BF, k_bloom, itens_carrinho);
             produto = input("<strong>Produto -> </strong>", "s");
             clc;    % limpa o terminal
 
@@ -167,27 +176,50 @@ return
 
 %% Testes aos módulos
 %% Classificador Naïve Bayes
-%% Filtro de Bloom
-%R = randi(152, 1000, 11);
 
-%carrinho1 = cell(1, 11);
-%carrinho2 = cell(1, 11);
+RESULTADO = zeros(numel(carrinhos_teste), 1);
+tp = 0;
+fp = 0;
+fn = 0;
+tn = 0;
 
-k_bloom = 3;
+%{
+                        Classe Original
+                               ____________________________
+              ________________| 'SEMANA' | 'FIM DE SEMANA' |
+     Classe  |       'SEMANA' |‾‾‾‾‾‾‾‾‾‾|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|
+Naïve Bayes  |'FIM DE SEMANA' |‾‾‾‾‾‾‾‾‾‾|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|
+              ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+%}
+for car = 1:numel(carrinhos_teste)
+    classe_real = carrinhos_teste{car}{1};
 
-RESULTADOS = zeros(1000, 1);
-% 1000 carrinhos, cada um com 11 items
-for carrinho = 1:1000
-    BF = BF_inicializar(150);
-
-    carrinho_idx = randperm(152, 11);   % escolha aleatória de itens
-
-    for product = 1:11
-        BF = BF_adicionar(cell2mat(caracteristicas(carrinho_idx(product))), BF, k_bloom);
-    end
-    if (sum(BF) ~= 11*k_bloom)
-        RESULTADOS(carrinho) = 1;
+    classe_carrinho = bayes_classificar_carrinho(carrinhos_teste{car}(3:end), caracteristicas, product_prob, prob_sem, prob_fimsem);
+    if strcmp(classe_real, "SEMANA")
+        if strcmp(classe_real, "SEMANA")
+            tp = tp+1;
+        else
+            fn = fn+1;
+        end
+    else
+        if strcmp(classe_real, "FIM DE SEMANA")
+            fp = fp+1;
+        else
+            tn = tn+1;
+        end
     end
 end
-
+precision = tp/(tp+fp);
+recall = tp/(tp+fn);
+accuracy = (tp+tn)/(tp+fp+tn+fn);
+F1 = (2*precision*recall)/(precision+recall);
+fprintf("\n<strong>TESTE 1: Classificador Naïve Bayes</strong>");
+fprintf("\nPrecision: %f\nRecall: %d\nAccuracy: %f\nF1: %f\n", precision, recall, accuracy, F1);
+%{
+acertos = sum(RESULTADO);
+erros = numel(carrinhos_teste) - sum(RESULTADO);
+fprintf("\n<strong>TESTE 1: Classificador Naïve Bayes</strong>");
+fprintf("\nAcertos: %d\nErros: %d\n", acertos, erros);
+%}
+%% Filtro de Bloom
 %% MinHash

@@ -13,9 +13,10 @@ function [carrinhos_similares, idx] = atualizar_carrinhos_similares(carrinho, ca
     distancias = distJ(carrinho, carrinhos);
 
     [~, idx] = sort(distancias, 'descend');  % carrinhos organizados por similaridade
-    idx = idx+1;    % ignora a linha inicial de 'carrinhos' que contém números de 0 a 10
-    carrinhos_similares = cell(5, 11);
-    carrinhos_similares(:) = '';
+    %idx = idx+1;    % ignora a linha inicial de 'carrinhos' que contém números de 0 a 10
+    %carrinhos_similares = cell(5, 11);
+    %carrinhos_similares(:) = '';
+    carrinhos_similares = [];
 
     count = 1; %contador para número de carrinhos válidos a serem recomendados
     for i = 1:length(idx)
@@ -25,7 +26,6 @@ function [carrinhos_similares, idx] = atualizar_carrinhos_similares(carrinho, ca
         end
         
         carrinho_candidato = carrinhos{idx(i)}(3:end);
-        disp(carrinho_candidato)
 
         if any(~ismember(carrinho_candidato, carrinho))
             count = count + 1;
