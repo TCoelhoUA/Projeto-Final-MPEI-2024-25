@@ -1,8 +1,8 @@
 %% Leitura  e interpretação dos datasets
 %h = waitbar(0, 'A ler os produtos...', 'Name', 'A processar dados (Por favor espere)');
+h = waitbar(1/12, 'A ler os produtos...', 'Name', 'A processar dados (Por favor espere)');
 dados_produtos = readcell("produtos_simplified.csv");  % dataset simplificado (para demonstração)
 %dados_produtos = readcell("produtos.csv");  % dataset original (para uso final)
-h = waitbar(1/12, 'A ler os produtos...', 'Name', 'A processar dados (Por favor espere)');
 
 %waitbar(1/12, h, 'A ler os carrinhos...');
 %carrinhos = readcell("carrinhos_simplified.csv");  % dataset simplificado (para demonstração)
@@ -83,6 +83,8 @@ delete(h);
 BF = BF_inicializar(400);   % 5000 é só um valor aleatório (possivelmente a alterar depois)
 k_bloom = 3;  % numero de funcoes de hash
 
+
+% Aplicação conjunta
 % Pedir input ao utilizador
 clc;    % limpa o terminal
 itens_carrinho = 0;
@@ -173,53 +175,3 @@ end
 
 disp("<strong>Exiting...</strong>");
 return
-
-%% Testes aos módulos
-%% Classificador Naïve Bayes
-
-RESULTADO = zeros(numel(carrinhos_teste), 1);
-tp = 0;
-fp = 0;
-fn = 0;
-tn = 0;
-
-%{
-                        Classe Original
-                               ____________________________
-              ________________| 'SEMANA' | 'FIM DE SEMANA' |
-     Classe  |       'SEMANA' |‾‾‾‾‾‾‾‾‾‾|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|
-Naïve Bayes  |'FIM DE SEMANA' |‾‾‾‾‾‾‾‾‾‾|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|
-              ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
-%}
-for car = 1:numel(carrinhos_teste)
-    classe_real = carrinhos_teste{car}{1};
-
-    classe_carrinho = bayes_classificar_carrinho(carrinhos_teste{car}(3:end), caracteristicas, product_prob, prob_sem, prob_fimsem);
-    if strcmp(classe_real, "SEMANA")
-        if strcmp(classe_real, "SEMANA")
-            tp = tp+1;
-        else
-            fn = fn+1;
-        end
-    else
-        if strcmp(classe_real, "FIM DE SEMANA")
-            fp = fp+1;
-        else
-            tn = tn+1;
-        end
-    end
-end
-precision = tp/(tp+fp);
-recall = tp/(tp+fn);
-accuracy = (tp+tn)/(tp+fp+tn+fn);
-F1 = (2*precision*recall)/(precision+recall);
-fprintf("\n<strong>TESTE 1: Classificador Naïve Bayes</strong>");
-fprintf("\nPrecision: %f\nRecall: %d\nAccuracy: %f\nF1: %f\n", precision, recall, accuracy, F1);
-%{
-acertos = sum(RESULTADO);
-erros = numel(carrinhos_teste) - sum(RESULTADO);
-fprintf("\n<strong>TESTE 1: Classificador Naïve Bayes</strong>");
-fprintf("\nAcertos: %d\nErros: %d\n", acertos, erros);
-%}
-%% Filtro de Bloom
-%% MinHash
