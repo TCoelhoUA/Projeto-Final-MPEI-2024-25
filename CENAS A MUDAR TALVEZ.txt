@@ -1,8 +1,4 @@
-Apagar 'calcProbCaract_v2'
 
-Apagar 'classificar' (está comentada no código, não chegamos a usar)
-
-Adicionar uma cena a dizer os produtos mais populares (com a variavel freq) (nao fazilvel pq as recomendacoes so vem com o produto)
 
 Colocar uma waitbar entre a adição de cada item
 

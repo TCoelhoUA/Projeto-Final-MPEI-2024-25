@@ -8,6 +8,8 @@ function recomendacoes = atualizar_recomendacoes(carrinho, BF, k, caracteristica
     % <strong>k</strong> - Número de funções de hash
     % <strong>caracteristicas</strong> - Todos os tipos únicos de produtos do dataset
     % <strong>product_prob</strong> - Matriz com 2 colunas: P(Característica|"SEMANA") e P(Característica|"FIM DE SEMANA")
+    % <strong>prob_sem</strong> - P("SEMANA")
+    % <strong>prob_fimsem</strong> - P("FIM DE SEMANA")
     % <strong>freq</strong> - Número de vezes que cada produto foi vendido
     %
     % <strong>Output:</strong>

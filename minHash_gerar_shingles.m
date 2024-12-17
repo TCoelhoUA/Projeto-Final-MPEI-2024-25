@@ -1,7 +1,9 @@
 function shingles = minHash_gerar_shingles(produtos, ks)
 %minHash_gerar_shingles cria os shingles um conjunto de strings
+%Input:
 %   produtos    -   conjunto de strings a criar shingles
 %   ks          -   tamanho de cada shingle
+%Output:
 %   shingles    - cell array com os shingles de cada produto
 
     shingles = cell(size(produtos, 1), 1);

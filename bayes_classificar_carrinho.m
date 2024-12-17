@@ -6,6 +6,8 @@ function classe_carrinho = bayes_classificar_carrinho(carrinho, caracteristicas,
     % <strong>carrinho</strong> - Carrinho atual do utilizador
     % <strong>caracteristicas</strong> - Todos os tipos únicos de produtos do dataset
     % <strong>product_prob</strong> - Matriz com 2 colunas: P(Característica|"SEMANA") e P(Característica|"FIM DE SEMANA")
+    % <strong>prob_sem</strong> - P("SEMANA")
+    % <strong>prob_fimsem</strong> - P("FIM DE SEMANA")
     %
     % <strong>Output:</strong>
     % <strong>classe_carrinho</strong> - Classe do carrinho

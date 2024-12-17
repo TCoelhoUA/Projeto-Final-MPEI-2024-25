@@ -3,8 +3,7 @@ function [product_prob, freq, h] = bayes_calculo_prob_caract(carrinhos, caracter
     % Associa uma classe a cada produto com base em compras individuais de cada produto no passado
     %
     % <strong>Input:</strong>
-    % <strong>produtos</strong>         - Registos de venda dos produtos (incluindo repetidos)
-    % <strong>classes</strong>          - Classes associadas a cada compra
+    % <strong>carrinhos</strong>        - Cell array de carrinhos
     % <strong>caracteristicas</strong>  - Todos os tipos únicos de produtos do dataset
     % <strong>h</strong>                - Waitbar associada
     %

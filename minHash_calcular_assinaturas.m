@@ -7,9 +7,11 @@ function [MA, h] = minHash_calcular_assinaturas(shingles, nhf, R, p, h)
     % <strong>nhf</strong>      -  Número de funções de hash
     % <strong>R</strong>        -  Matriz aleatória
     % <strong>p</strong>        -  Número de primo
+    % <strong>h</strong>        -  waitbar atual
     %
     % <strong>Output:</strong>
-    % <strong>MA</strong>       - Matriz assinatura
+    % <strong>MA</strong>       -  Matriz assinatura
+    % <strong>h</strong>        -  waitbar atualizada
     
     Np = length(shingles);
     MA = zeros(nhf, Np);
